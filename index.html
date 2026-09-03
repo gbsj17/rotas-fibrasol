@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rotas & Logística PWA</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Configurações PWA e Mobile -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#152e50">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Gestão Rotas">
+
+    <style>
+        @font-face {
+            font-family: 'Handel Gothic D';
+            src: url('Handel Gothic D Bold.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .tab-active {
+            color: #152e50;
+            border-bottom: 3px solid #152e50;
+            font-weight: 700;
+            background-color: #f8fafc;
+        }
+    </style>
+</head>
+<body class="h-full text-slate-800 antialiased flex flex-col justify-between">
+
+    <!-- Container do PWA Alerta de Instalação -->
+    <div id="pwaInstallBanner" class="hidden fixed top-0 left-0 right-0 bg-[#152e50] text-white px-4 py-3 z-50 shadow-xl flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-mobile-screen text-2xl"></i>
+            <div>
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-300">Aplicativo Logístico</p>
+                <p class="text-sm font-semibold">Instalar na tela inicial?</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2">
+            <button onclick="dismissInstallPwa()" class="text-xs text-slate-300 hover:text-white px-3 py-2">Agora não</button>
+            <button onclick="installPwa()" class="text-xs bg-white text-[#152e50] font-bold px-3.5 py-2 rounded-lg shadow">Instalar</button>
+        </div>
+    </div>
+
+    <!-- Toast Notifications Container -->
+    <div id="toastContainer" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-full max-w-sm px-4 pointer-events-none"></div>
+
+    <!-- Modal de Confirmação Genérica -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 text-center">
+            <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="confirmTitle" class="text-lg font-bold text-slate-800">Confirmação</h3>
+            <p id="confirmMessage" class="text-sm text-slate-600">Tem certeza que deseja prosseguir?</p>
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="fecharModalConfirmacao()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50">Cancelar</button>
+                <button id="confirmBtnAction" class="flex-1 py-3 rounded-xl bg-rose-600 text-white font-semibold text-sm hover:bg-rose-700 shadow-md shadow-rose-200">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Editar Senha -->
+    <div id="modalEditPassword" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-lock text-[#152e50]"></i> Alterar Credenciais
+                </h3>
+                <button onclick="fecharModalEditarSenha()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-3">
+                <p id="editUserDisplay" class="text-xs font-bold text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100"></p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nova Senha / PIN</label>
+                    <input type="text" id="newPasswordInput" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm font-mono">
+                </div>
+            </div>
+            <input type="hidden" id="editUserId">
+            <input type="hidden" id="editUserType">
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="fecharModalEditarSenha()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50">Cancelar</button>
+                <button onclick="salvarNovaSenha()" class="flex-1 py-3 rounded-xl bg-[#152e50] text-white font-semibold text-xs hover:bg-[#0f223d] shadow-md">Salvar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Enviar / Atribuir Representante -->
+    <div id="modalAssignRep" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-briefcase text-purple-600"></i> Enviar para Representante
+                </h3>
+                <button onclick="fecharModalAssignRep()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Selecione o Representante</label>
+                <select id="selectRepModalInput" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none text-xs bg-white"></select>
+            </div>
+            <input type="hidden" id="targetRouteIdForRep">
+            <div class="flex items-center gap-3 pt-2">
+                <button onclick="fecharModalAssignRep()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50">Cancelar</button>
+                <button onclick="salvarRepresentanteRota()" class="flex-1 py-3 rounded-xl bg-purple-600 text-white font-semibold text-xs hover:bg-purple-700 shadow-md shadow-purple-200">Salvar e Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Visualização de Rota -->
+    <div id="modalViewRoute" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div id="modalRouteHeader" class="bg-[#152e50] p-4 text-white flex items-center justify-between">
+                <div>
+                    <h3 id="modalRouteDriver" class="font-bold text-base flex items-center gap-2"></h3>
+                    <p id="modalRouteSubtitle" class="text-xs text-slate-300"></p>
+                </div>
+                <button onclick="fecharModalVisualizarRota()" class="text-slate-300 hover:text-white p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-4 border-b border-slate-100 bg-slate-50">
+                <div class="flex justify-between text-xs font-semibold text-slate-600 mb-1">
+                    <span>Progresso das Cidades</span>
+                    <span id="modalRouteProgressText">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2">
+                    <div id="modalRouteProgressBar" class="bg-[#152e50] h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+            <div id="modalRouteStopsList" class="p-4 overflow-y-auto space-y-2 flex-1"></div>
+            <div class="p-4 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="fecharModalVisualizarRota()" class="px-5 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl text-xs hover:bg-slate-300">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELA INITIAL / MENU DE SELEÇÃO DE ACESSO -->
+    <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200">
+        <div class="w-full max-w-sm space-y-6 text-center">
+            <div class="space-y-3">
+                <!-- Ícone Reformulado: Rota de Mapa em tom Azul #152e50 -->
+                <div class="w-22 h-22 w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
+                    <i class="fa-solid fa-map-location-dot text-3xl text-white relative z-10 drop-shadow"></i>
+                </div>
+                <!-- Título com tom #152e50 e fonte aumentada -->
+                <h1 class="text-3xl font-extrabold text-[#152e50] tracking-tight" style="font-family: 'Handel Gothic D', sans-serif; font-style: italic;">LOGÍSTICA FIBRASOL</h1>
+                <p class="text-xs text-slate-500 font-medium">Selecione seu perfil para acessar o sistema</p>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="selecionarPerfil('driver')" class="w-full bg-white hover:bg-emerald-50/50 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-lg transition-colors">
+                        <i class="fa-solid fa-truck"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800">Motorista</p>
+                        <p class="text-xs text-slate-500">Visualizar e concluir paradas</p>
+                    </div>
+                </button>
+
+                <button onclick="selecionarPerfil('representative')" class="w-full bg-white hover:bg-purple-50/50 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
+                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white flex items-center justify-center text-lg transition-colors">
+                        <i class="fa-solid fa-briefcase"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800">Representante</p>
+                        <p class="text-xs text-slate-500">Acompanhar cargas e itinerários</p>
+                    </div>
+                </button>
+
+                <button onclick="selecionarPerfil('admin')" class="w-full bg-white hover:bg-slate-100 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
+                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-[#152e50] group-hover:bg-[#152e50] group-hover:text-white flex items-center justify-center text-lg transition-colors">
+                        <i class="fa-solid fa-user-gear"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-800">Administrador</p>
+                        <p class="text-xs text-slate-500">Gestão de rotas e equipe</p>
+                    </div>
+                </button>
+
+                <button id="btnInstallAppMain" onclick="installPwa()" class="hidden w-full bg-[#152e50] hover:bg-[#0f223d] text-white font-bold py-3.5 px-4 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
+                    <i class="fa-solid fa-download text-sm"></i> Instalar Aplicativo
+                </button>
+            </div>
+            <p class="text-[11px] text-slate-400">PWA v2.5 • Sincronização em Tempo Real</p>
+        </div>
+    </div>
+
+    <!-- TELA DE LOGIN -->
+    <div id="screenLogin" class="hidden min-h-full flex flex-col items-center justify-center p-6 bg-slate-50">
+        <div class="w-full max-w-sm bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-5">
+            <button onclick="voltarParaSelecaoPerfil()" id="loginBackBtn" class="text-xs text-slate-600 flex items-center gap-2 font-bold py-2 px-3 bg-slate-100 rounded-xl transition-all w-fit">
+                <i class="fa-solid fa-arrow-left text-sm"></i> Voltar
+            </button>
+            <div class="text-center space-y-1">
+                <h2 id="loginTitle" class="text-xl font-bold text-slate-800">Login</h2>
+                <p id="loginSubtitle" class="text-xs text-slate-500">Insira suas credenciais para continuar</p>
+            </div>
+
+            <!-- Formulário Admin -->
+            <form id="formLoginAdmin" onsubmit="realizarLoginAdmin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário Admin</label>
+                    <input type="text" id="adminUser" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
+                    <input type="password" id="adminPass" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl shadow-md transition-all text-sm">Entrar como Admin</button>
+            </form>
+
+            <!-- Formulário Pin -->
+            <form id="formLoginPin" onsubmit="realizarLoginPin(event)" class="space-y-4 hidden">
+                <div>
+                    <label id="loginNameLabel" class="block text-xs font-bold text-slate-700 uppercase mb-1">Seu Nome</label>
+                    <input type="text" id="loginNameInput" required placeholder="Digite seu nome" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Senha</label>
+                    <input type="password" id="loginPinInput" required placeholder="Ex: 1234" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm font-mono tracking-widest text-center text-lg">
+                </div>
+                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 text-white font-bold rounded-xl shadow-md transition-all text-sm">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL ADMINISTRADOR -->
+    <div id="dashboardAdmin" class="hidden min-h-full flex flex-col bg-slate-100">
+        <div class="sticky top-0 z-30 bg-[#152e50] shadow-md">
+            <header class="text-white p-4 flex items-center justify-between border-b border-slate-800">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-solid fa-user-gear text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-sm">Painel do Administrador</h2>
+                        <p class="text-[10px] text-slate-300">Gestão Geral de Rotas</p>
+                    </div>
+                </div>
+                <button onclick="fazerLogout()" class="text-xs bg-[#0f223d] hover:bg-[#0a182b] text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700">Sair</button>
+            </header>
+
+            <!-- Abas do Admin -->
+            <div class="bg-white border-b border-slate-200 flex text-xs font-semibold text-slate-500 overflow-x-auto hide-scrollbar whitespace-nowrap">
+                <button id="tabRotas" onclick="alternarAbaAdmin('rotas')" class="flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all">
+                    <i class="fa-solid fa-route"></i> Rotas
+                </button>
+                <button id="tabDashboard" onclick="alternarAbaAdmin('dashboard')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </button>
+                <button id="tabMotoristas" onclick="alternarAbaAdmin('motoristas')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-users"></i> Motoristas
+                </button>
+                <button id="tabRepresentantes" onclick="alternarAbaAdmin('representantes')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-briefcase"></i> Representantes
+                </button>
+                <button id="tabAdmins" onclick="alternarAbaAdmin('admins')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <i class="fa-solid fa-user-shield"></i> Administradores
+                </button>
+            </div>
+        </div>
+
+        <main class="p-4 space-y-6 flex-1 max-w-4xl mx-auto w-full">
+            <!-- ABA ROTAS -->
+            <div id="contentRotas" class="space-y-6">
+                <!-- CARD 01: Iniciar uma Nova Rota -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-plus-circle text-[#152e50]"></i> Card 01 - Iniciar uma Nova Rota
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Link do Google Maps ou Lista de Paradas</label>
+                            <textarea id="urlInput" rows="3" placeholder="Cole o link do Google Maps compartilhada ou os endereços linha por linha..." class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nº Carga / Manifest</label>
+                                <input type="text" id="cargoNumberInput" placeholder="Ex: CG-8849" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Atribuir Motorista *</label>
+                                <select id="selectDriverForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs bg-white"></select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Atribuir Representante</label>
+                                <select id="selectRepForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs bg-white"></select>
+                            </div>
+                        </div>
+                        <button onclick="gerarEAtribuirRota()" class="w-full py-3.5 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl shadow-md transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-paper-plane"></i> Processar e Enviar Rota
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CARD 02: Rotas Ativas -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-truck-fast text-[#152e50]"></i> Card 02 - Rotas Ativas em Andamento
+                            </h3>
+                            <p id="adminActiveCountSummary" class="text-xs text-slate-500 mt-0.5">Calculando cargas ativas...</p>
+                        </div>
+                        <input type="text" id="searchRoutesInput" oninput="renderAdminRoutesList()" placeholder="Buscar rota/motorista/carga..." class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#152e50] w-full sm:w-auto">
+                    </div>
+                    <div id="adminRoutesList" class="space-y-3"></div>
+                </div>
+
+                <!-- CARD 03: Rotas Finalizadas -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Card 03 - Rotas Finalizadas por Mês
+                            </h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Histórico consolidado de cargas entregues</p>
+                        </div>
+                        <input type="text" id="searchArchivedRoutesInput" oninput="renderAdminArchivedRoutesList()" placeholder="Buscar finalizadas..." class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#152e50] w-full sm:w-auto">
+                    </div>
+                    <div id="adminArchivedSummary" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
+                    <div id="adminArchivedRoutesList" class="space-y-3 pt-2"></div>
+                </div>
+            </div>
+
+            <!-- ABA DASHBOARD -->
+            <div id="contentDashboard" class="hidden space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cargas em Andamento</p>
+                            <p id="dashActiveCount" class="text-2xl font-extrabold text-[#152e50] mt-1">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-slate-100 text-[#152e50] flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-truck-fast"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cargas Finalizadas</p>
+                            <p id="dashArchivedCount" class="text-2xl font-extrabold text-emerald-600 mt-1">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cidades Atendidas</p>
+                            <p id="dashCitiesCount" class="text-2xl font-extrabold text-purple-600 mt-1">0</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desempenho de Motoristas no Mês Atual -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amber-500"></i> Desempenho de Motoristas (Cargas no Mês Atual)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Quantidade de cargas carregadas/concluídas por motorista neste mês</p>
+                    </div>
+                    <div id="dashDriversMonthlyList" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+
+            <!-- ABA MOTORISTAS -->
+            <div id="contentMotoristas" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus text-[#152e50]"></i> Cadastrar Novo Motorista
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Motorista</label>
+                            <input type="text" id="newDriverName" placeholder="Ex: João Silva" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Senha (Opcional)</label>
+                            <input type="text" id="newDriverPin" placeholder="Gerado automaticamente se vazio" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs font-mono">
+                        </div>
+                    </div>
+                    <button onclick="cadastrarMotorista()" class="w-full py-3 bg-[#152e50] text-white font-bold rounded-xl shadow hover:bg-[#0f223d] text-xs uppercase tracking-wider">Cadastrar Motorista</button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 text-base">Motoristas Cadastrados</h3>
+                        <input type="text" id="searchDriversInput" oninput="renderAdminDriversList()" placeholder="Buscar motorista..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white">
+                    </div>
+                    <div id="adminDriversList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+
+            <!-- ABA REPRESENTANTES -->
+            <div id="contentRepresentantes" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-purple-600"></i> Cadastrar Novo Representante
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nome do Representante</label>
+                            <input type="text" id="newRepName" placeholder="Ex: Carlos Representações" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Senha (Opcional)</label>
+                            <input type="text" id="newRepPin" placeholder="Gerado automaticamente se vazio" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none text-xs font-mono">
+                        </div>
+                    </div>
+                    <button onclick="cadastrarRepresentante()" class="w-full py-3 bg-purple-600 text-white font-bold rounded-xl shadow hover:bg-purple-700 text-xs uppercase tracking-wider">Cadastrar Representante</button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 text-base">Representantes Cadastrados</h3>
+                        <input type="text" id="searchRepsInput" oninput="renderAdminRepsList()" placeholder="Buscar representante..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white">
+                    </div>
+                    <div id="adminRepsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+
+            <!-- ABA ADMINS -->
+            <div id="contentAdmins" class="hidden space-y-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-slate-700"></i> Cadastrar Novo Administrador
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário Admin</label>
+                            <input type="text" id="newAdminName" placeholder="Ex: admin2" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-500 outline-none text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha (Opcional)</label>
+                            <input type="text" id="newAdminPin" placeholder="Gerado automaticamente se vazio" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-slate-500 outline-none text-xs font-mono">
+                        </div>
+                    </div>
+                    <button onclick="cadastrarAdmin()" class="w-full py-3 bg-slate-800 text-white font-bold rounded-xl shadow hover:bg-slate-900 text-xs uppercase tracking-wider">Cadastrar Administrador</button>
+                </div>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-slate-800 text-base">Administradores Cadastrados</h3>
+                        <input type="text" id="searchAdminsInput" oninput="renderAdminAdminsList()" placeholder="Buscar admin..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white">
+                    </div>
+                    <div id="adminAdminsList" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PAINEL MOTORISTA -->
+    <div id="dashboardDriver" class="hidden min-h-full flex flex-col bg-slate-100 relative">
+        <header class="bg-emerald-600 text-white p-4 sticky top-0 z-30 shadow-md flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-truck"></i>
+                </div>
+                <div>
+                    <h2 id="driverWelcomeName" class="font-bold text-sm">Motorista</h2>
+                    <p class="text-[10px] text-emerald-200">Painel de Entregas</p>
+                </div>
+            </div>
+            <button onclick="fazerLogout()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-lg border border-emerald-500">Sair</button>
+        </header>
+
+        <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-20">
+            <div id="driverNoRoute" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center space-y-3">
+                <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-clipboard-check"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">Nenhuma rota ativa</h3>
+                <p class="text-xs text-slate-500">Você não possui nenhuma carga ou itinerário atribuído no momento.</p>
+            </div>
+
+            <div id="driverActiveRoute" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span id="driverCargoNumberDisplay" class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-100 inline-block mb-1"></span>
+                            <h3 class="font-bold text-slate-800 text-base">Minha Rota de Hoje</h3>
+                        </div>
+                        <span id="driverProgressBadge" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full"></span>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-2">
+                        <div id="driverProgressBar" class="bg-emerald-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px] text-slate-500">
+                        <div><i class="fa-solid fa-clock-rotate-left mr-1 text-emerald-600"></i> Início: <strong id="driverStartTime" class="text-slate-700">-</strong></div>
+                        <div><i class="fa-solid fa-flag-checkered mr-1 text-emerald-600"></i> Fim: <strong id="driverEndTime" class="text-slate-700">-</strong></div>
+                    </div>
+                </div>
+                <div id="driverStopsList" class="space-y-2.5"></div>
+            </div>
+        </main>
+
+        <a id="btnOpenMaps" href="#" target="_blank" class="hidden fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3.5 rounded-full shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-105">
+            <i class="fa-solid fa-map-location-dot text-lg"></i>
+            <span class="text-xs uppercase tracking-wider">Abrir no Google Maps</span>
+        </a>
+    </div>
+
+    <!-- PAINEL REPRESENTANTE -->
+    <div id="dashboardRepresentative" class="hidden min-h-full flex flex-col bg-slate-100">
+        <header class="bg-purple-700 text-white p-4 sticky top-0 z-30 shadow-md flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div>
+                    <h2 id="repWelcomeName" class="font-bold text-sm">Representante</h2>
+                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas</p>
+                </div>
+            </div>
+            <button onclick="fazerLogout()" class="text-xs bg-purple-800 hover:bg-purple-900 text-white px-3.5 py-2 rounded-lg border border-purple-600">Sair</button>
+        </header>
+
+        <main class="p-4 space-y-4 flex-1 max-w-xl mx-auto w-full">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Carga</label>
+                        <input type="text" id="searchRepCargoInput" placeholder="Nº da carga..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Motorista</label>
+                        <select id="searchRepDriverInput" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"></select>
+                    </div>
+                </div>
+                <button onclick="pesquisarCargaRepresentante()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass"></i> Pesquisar Carga / Motorista
+                </button>
+            </div>
+
+            <div id="repSearchResultContainer" class="hidden space-y-2"></div>
+
+            <div class="flex border-b border-slate-200 text-xs font-bold text-slate-500">
+                <button id="repTabAtivas" onclick="alternarAbaRepresentante('ativas')" class="flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white">Cargas Acompanhadas</button>
+                <button id="repTabConcluidas" onclick="alternarAbaRepresentante('concluidas')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-slate-700">Cargas Concluídas</button>
+            </div>
+
+            <div id="repNoRoutes" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center space-y-3">
+                <div class="w-16 h-16 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                    <i class="fa-solid fa-boxes-packing"></i>
+                </div>
+                <h3 class="font-bold text-slate-800 text-base">Nenhuma carga acompanhada</h3>
+                <p class="text-xs text-slate-500">Pesquise por uma carga ou motorista acima e clique em "Sim" para começar a acompanhar.</p>
+            </div>
+            <div id="repActiveRoutesList" class="space-y-4"></div>
+        </main>
+    </div>
+
+    <!-- Firebase e Lógica JavaScript -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js')
+                .then(() => console.log('PWA: Service Worker registrado com sucesso!'))
+                .catch(err => console.error('PWA: Erro ao registrar Service Worker:', err));
+        }
+
+        let db = null;
+        let useFirebase = false;
+        const appId = "pwa-logistica-v2";
+
+        const firebaseConfig = {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
+
+        if (firebaseConfig.apiKey && firebaseConfig.projectId) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                useFirebase = true;
+            } catch (e) {
+                console.warn("Erro ao inicializar Firebase. Usando LocalStorage Fallback.", e);
+            }
+        }
+
+        class LocalStorageManager {
+            constructor() {
+                this.listeners = {};
+            }
+            get(key) {
+                return JSON.parse(localStorage.getItem(`app_${key}`) || "[]");
+            }
+            set(key, val) {
+                localStorage.setItem(`app_${key}`, JSON.stringify(val));
+                if (this.listeners[key]) {
+                    this.listeners[key].forEach(cb => cb(val));
+                }
+            }
+            subscribe(key, cb) {
+                if (!this.listeners[key]) this.listeners[key] = [];
+                this.listeners[key].push(cb);
+                cb(this.get(key));
+                return () => {
+                    this.listeners[key] = this.listeners[key].filter(fn => fn !== cb);
+                };
+            }
+        }
+        const LocalDb = new LocalStorageManager();
+
+        let currentUserRole = null;
+        let currentDriverId = null;
+        let currentRepId = null;
+        let selectedRoleForLogin = null;
+        let repCurrentTab = 'ativas';
+
+        let allDrivers = [];
+        let allReps = [];
+        let allRoutes = [];
+        let allAdmins = [];
+
+        let unsubDrivers = null;
+        let unsubReps = null;
+        let unsubRoutes = null;
+        let unsubAdmins = null;
+
+        const notificationSound = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('pwaInstallBanner')?.classList.remove('hidden');
+            document.getElementById('btnInstallAppMain')?.classList.remove('hidden');
+        });
+
+        window.installPwa = () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    deferredPrompt = null;
+                    document.getElementById('pwaInstallBanner')?.classList.add('hidden');
+                    document.getElementById('btnInstallAppMain')?.classList.add('hidden');
+                });
+            } else {
+                showToast("Para instalar, use a opção 'Adicionar à Tela Inicial' do seu navegador.", "info");
+            }
+        };
+
+        window.dismissInstallPwa = () => {
+            document.getElementById('pwaInstallBanner')?.classList.add('hidden');
+        };
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await inicializarContaAdminPadrao();
+            await inicializarContaJrPadrao();
+            verificarSessaoSalva();
+        });
+
+        async function inicializarContaAdminPadrao() {
+            let configAdminLegacy = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+            if (useFirebase) {
+                try {
+                    const snapLegacy = await getDoc(doc(db, `artifacts/${appId}/public/data/settings`, 'admin'));
+                    if (snapLegacy.exists()) configAdminLegacy = snapLegacy.data();
+                } catch(e){}
+            }
+            if (!useFirebase) {
+                const admins = LocalDb.get('admins');
+                if (admins.length === 0) {
+                    admins.push({ id: 'adm_default', name: configAdminLegacy.username, pin: configAdminLegacy.password, createdAt: Date.now() });
+                    LocalDb.set('admins', admins);
+                }
+            }
+        }
+
+        async function inicializarContaJrPadrao() {
+            if (!useFirebase) {
+                const drivers = LocalDb.get('drivers');
+                if (!drivers.some(d => d.name.toLowerCase() === 'jr')) {
+                    drivers.push({ id: 'drv_jr_default', name: 'Jr', pin: '1234', createdAt: Date.now() });
+                    LocalDb.set('drivers', drivers);
+                }
+            }
+        }
+
+        function esconderTodasTelas() {
+            document.getElementById('screenRoleSelection').classList.add('hidden');
+            document.getElementById('screenLogin').classList.add('hidden');
+            document.getElementById('dashboardAdmin').classList.add('hidden');
+            document.getElementById('dashboardDriver').classList.add('hidden');
+            document.getElementById('dashboardRepresentative').classList.add('hidden');
+        }
+
+        window.selecionarPerfil = (role) => {
+            selectedRoleForLogin = role;
+            esconderTodasTelas();
+            document.getElementById('screenLogin').classList.remove('hidden');
+
+            const title = document.getElementById('loginTitle');
+            const formAdmin = document.getElementById('formLoginAdmin');
+            const formPin = document.getElementById('formLoginPin');
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            const loginBackBtn = document.getElementById('loginBackBtn');
+            const loginNameInput = document.getElementById('loginNameInput');
+            
+            loginNameInput.value = '';
+            document.getElementById('loginPinInput').value = '';
+
+            if (role === 'admin') {
+                title.innerText = 'Acesso Administrador';
+                formAdmin.classList.remove('hidden');
+                formPin.classList.add('hidden');
+                loginBackBtn.className = "text-xs text-slate-600 hover:text-[#152e50] flex items-center gap-2 font-bold py-2 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all w-fit";
+            } else if (role === 'driver') {
+                title.innerText = 'Acesso Motorista';
+                formAdmin.classList.add('hidden');
+                formPin.classList.remove('hidden');
+                loginSubmitBtn.className = "w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-all text-sm";
+                loginBackBtn.className = "text-xs text-emerald-700 hover:text-emerald-800 flex items-center gap-2 font-bold py-2 px-3 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-all w-fit";
+            } else if (role === 'representative') {
+                title.innerText = 'Acesso Representante';
+                formAdmin.classList.add('hidden');
+                formPin.classList.remove('hidden');
+                loginSubmitBtn.className = "w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition-all text-sm";
+                loginBackBtn.className = "text-xs text-purple-700 hover:text-purple-800 flex items-center gap-2 font-bold py-2 px-3 bg-purple-50 hover:bg-purple-100 rounded-xl transition-all w-fit";
+            }
+        };
+
+        window.voltarParaSelecaoPerfil = () => {
+            esconderTodasTelas();
+            document.getElementById('screenRoleSelection').classList.remove('hidden');
+        };
+
+        window.realizarLoginAdmin = (e) => {
+            e.preventDefault();
+            const u = document.getElementById('adminUser').value.trim();
+            const p = document.getElementById('adminPass').value.trim();
+
+            const foundAdmin = allAdmins.find(a => a.name === u && a.pin === p);
+            const legacyUser = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+
+            if (foundAdmin || (u === legacyUser.username && p === legacyUser.password)) {
+                currentUserRole = 'admin';
+                salvarSessao();
+                iniciarPainelAdmin();
+            } else {
+                showToast("Usuário ou senha incorretos", "error");
+            }
+        };
+
+        window.realizarLoginPin = (e) => {
+            e.preventDefault();
+            const typedName = document.getElementById('loginNameInput').value.trim().toLowerCase();
+            const pin = document.getElementById('loginPinInput').value.trim();
+
+            if (!typedName) return showToast("Digite seu nome.", "error");
+
+            if (selectedRoleForLogin === 'driver') {
+                const driver = allDrivers.find(d => (d.name || '').toLowerCase() === typedName);
+                if (driver && driver.pin.toString() === pin) {
+                    currentUserRole = 'driver';
+                    currentDriverId = driver.id;
+                    salvarSessao();
+                    iniciarPainelMotorista(driver);
+                } else {
+                    showToast("Nome ou PIN incorreto", "error");
+                }
+            } else if (selectedRoleForLogin === 'representative') {
+                const rep = allReps.find(r => (r.name || '').toLowerCase() === typedName);
+                if (rep && rep.pin.toString() === pin) {
+                    currentUserRole = 'representative';
+                    currentRepId = rep.id;
+                    salvarSessao();
+                    iniciarPainelRepresentante(rep);
+                } else {
+                    showToast("Nome ou PIN incorreto", "error");
+                }
+            }
+        };
+
+        function salvarSessao() {
+            localStorage.setItem('app_session', JSON.stringify({
+                role: currentUserRole,
+                driverId: currentDriverId,
+                repId: currentRepId
+            }));
+        }
+
+        function verificarSessaoSalva() {
+            const session = JSON.parse(localStorage.getItem('app_session') || "null");
+            if (!session) {
+                carregarDadosIniciais();
+                return;
+            }
+
+            currentUserRole = session.role;
+            currentDriverId = session.driverId;
+            currentRepId = session.repId;
+
+            carregarDadosIniciais(() => {
+                if (currentUserRole === 'admin') iniciarPainelAdmin();
+                else if (currentUserRole === 'driver') {
+                    const driver = allDrivers.find(d => d.id === currentDriverId);
+                    if (driver) iniciarPainelMotorista(driver); else fazerLogout();
+                } else if (currentUserRole === 'representative') {
+                    const rep = allReps.find(r => r.id === currentRepId);
+                    if (rep) iniciarPainelRepresentante(rep); else fazerLogout();
+                }
+            });
+        }
+
+        function carregarDadosIniciais(callback) {
+            if (useFirebase) {
+                onSnapshot(collection(db, `artifacts/${appId}/public/data/drivers`), snap => {
+                    allDrivers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') {
+                        renderAdminDriversList();
+                        renderAdminDashboard();
+                    }
+                    if (callback) callback();
+                });
+                onSnapshot(collection(db, `artifacts/${appId}/public/data/representatives`), snap => {
+                    allReps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') renderAdminRepsList();
+                });
+                onSnapshot(collection(db, `artifacts/${appId}/public/data/admins`), snap => {
+                    allAdmins = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if(allAdmins.length === 0) {
+                        const legacyUser = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+                        addDoc(collection(db, `artifacts/${appId}/public/data/admins`), { name: legacyUser.username, pin: legacyUser.password, createdAt: Date.now() });
+                    }
+                    if (currentUserRole === 'admin') renderAdminAdminsList();
+                });
+                onSnapshot(collection(db, `artifacts/${appId}/public/data/routes`), snap => {
+                    allRoutes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') {
+                        renderAdminRoutesList();
+                        renderAdminArchivedRoutesList();
+                        renderAdminDashboard();
+                    } else if (currentUserRole === 'representative') {
+                        renderRepDashboard();
+                    }
+                });
+            } else {
+                allDrivers = LocalDb.get('drivers');
+                allReps = LocalDb.get('representatives');
+                allRoutes = LocalDb.get('routes');
+                allAdmins = LocalDb.get('admins');
+                if (callback) callback();
+            }
+        }
+
+        window.fazerLogout = () => {
+            localStorage.removeItem('app_session');
+            currentUserRole = null;
+            currentDriverId = null;
+            currentRepId = null;
+            
+            if(unsubDrivers) unsubDrivers();
+            if(unsubReps) unsubReps();
+            if(unsubRoutes) unsubRoutes();
+            if(unsubAdmins) unsubAdmins();
+
+            esconderTodasTelas();
+            document.getElementById('screenRoleSelection').classList.remove('hidden');
+            showToast("Sessão encerrada com sucesso");
+        };
+
+        function iniciarPainelAdmin() {
+            esconderTodasTelas();
+            document.getElementById('dashboardAdmin').classList.remove('hidden');
+            startAdminListeners();
+            renderAdminDriversList();
+            renderAdminRepsList();
+            renderAdminRoutesList();
+            renderAdminArchivedRoutesList();
+            renderAdminDashboard();
+        }
+
+        function iniciarPainelMotorista(driver) {
+            esconderTodasTelas();
+            document.getElementById('dashboardDriver').classList.remove('hidden');
+            document.getElementById('driverWelcomeName').innerText = `Motorista: ${driver.name}`;
+            startDriverListeners();
+        }
+
+        function iniciarPainelRepresentante(rep) {
+            esconderTodasTelas();
+            document.getElementById('dashboardRepresentative').classList.remove('hidden');
+            document.getElementById('repWelcomeName').innerText = `Rep: ${rep.name}`;
+            startRepListeners();
+            renderRepDashboard();
+        }
+
+        window.alternarAbaAdmin = (tab) => {
+            const tabs = [
+                {id: 'tabRotas', contentId: 'contentRotas'},
+                {id: 'tabDashboard', contentId: 'contentDashboard'},
+                {id: 'tabMotoristas', contentId: 'contentMotoristas'},
+                {id: 'tabRepresentantes', contentId: 'contentRepresentantes'},
+                {id: 'tabAdmins', contentId: 'contentAdmins'}
+            ];
+
+            tabs.forEach(t => {
+                document.getElementById(t.id).className = "flex-1 min-w-[120px] py-4 px-4 text-center text-slate-500 transition-all hover:bg-slate-50";
+                document.getElementById(t.contentId).classList.add('hidden');
+            });
+
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).className = "flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
+            document.getElementById(`content${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+
+            if (tab === 'dashboard') {
+                renderAdminDashboard();
+            }
+        };
+
+        window.abrirModalEditarSenha = (id, type, name, currentPin) => {
+            document.getElementById('editUserId').value = id;
+            document.getElementById('editUserType').value = type;
+            let labelType = type === 'admin' ? 'Administrador' : type === 'rep' ? 'Representante' : 'Motorista';
+            document.getElementById('editUserDisplay').innerHTML = `<i class="fa-solid fa-user mr-1"></i> ${labelType}: <strong>${name}</strong>`;
+            document.getElementById('newPasswordInput').value = currentPin;
+            document.getElementById('modalEditPassword').classList.remove('hidden');
+        };
+
+        window.fecharModalEditarSenha = () => {
+            document.getElementById('modalEditPassword').classList.add('hidden');
+        };
+
+        window.salvarNovaSenha = async () => {
+            const id = document.getElementById('editUserId').value;
+            const type = document.getElementById('editUserType').value;
+            const newPin = document.getElementById('newPasswordInput').value.trim();
+
+            if (!newPin) return showToast("A senha / PIN não pode estar vazio.", "error");
+
+            let collectionName = type === 'admin' ? 'admins' : type === 'rep' ? 'representatives' : 'drivers';
+
+            if (useFirebase) {
+                await updateDoc(doc(db, `artifacts/${appId}/public/data/${collectionName}`, id), { pin: newPin });
+            } else {
+                const list = LocalDb.get(collectionName);
+                const idx = list.findIndex(item => item.id === id);
+                if (idx !== -1) {
+                    list[idx].pin = newPin;
+                    LocalDb.set(collectionName, list);
+                }
+            }
+
+            fecharModalEditarSenha();
+            showToast("Senha atualizada com sucesso!", "success");
+        };
+
+        window.cadastrarAdmin = async () => {
+            const nameInput = document.getElementById('newAdminName');
+            const pinInput = document.getElementById('newAdminPin');
+            const name = nameInput.value.trim();
+            let pin = pinInput.value.trim() || Math.floor(1000 + Math.random() * 9000).toString();
+
+            if (!name) return showToast("Digite o nome/usuário do administrador", "error");
+
+            if (useFirebase) {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/admins`), { name, pin, createdAt: Date.now() });
+            } else {
+                const admins = LocalDb.get('admins');
+                admins.push({ id: `adm_${Date.now()}`, name, pin, createdAt: Date.now() });
+                LocalDb.set('admins', admins);
+            }
+
+            nameInput.value = '';
+            pinInput.value = '';
+            showToast(`Administrador "${name}" cadastrado! Senha: ${pin}`, "success");
+        };
+
+        window.cadastrarMotorista = async () => {
+            const nameInput = document.getElementById('newDriverName');
+            const pinInput = document.getElementById('newDriverPin');
+            const name = nameInput.value.trim();
+            let pin = pinInput.value.trim() || Math.floor(1000 + Math.random() * 9000).toString();
+
+            if (!name) return showToast("Digite o nome/usuário do motorista", "error");
+
+            if (useFirebase) {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/drivers`), { name, pin, createdAt: Date.now() });
+            } else {
+                const drivers = LocalDb.get('drivers');
+                drivers.push({ id: `drv_${Date.now()}`, name, pin, createdAt: Date.now() });
+                LocalDb.set('drivers', drivers);
+            }
+
+            nameInput.value = '';
+            pinInput.value = '';
+            showToast(`Motorista "${name}" cadastrado! Senha/PIN: ${pin}`, "success");
+            renderAdminDriversList();
+            renderAdminDashboard();
+        };
+
+        window.cadastrarRepresentante = async () => {
+            const nameInput = document.getElementById('newRepName');
+            const pinInput = document.getElementById('newRepPin');
+            const name = nameInput.value.trim();
+            let pin = pinInput.value.trim() || Math.floor(1000 + Math.random() * 9000).toString();
+
+            if (!name) return showToast("Digite o nome/usuário do representante", "error");
+
+            if (useFirebase) {
+                await addDoc(collection(db, `artifacts/${appId}/public/data/representatives`), { name, pin, createdAt: Date.now() });
+            } else {
+                const reps = LocalDb.get('representatives');
+                reps.push({ id: `rep_${Date.now()}`, name, pin, createdAt: Date.now() });
+                LocalDb.set('representatives', reps);
+            }
+
+            nameInput.value = '';
+            pinInput.value = '';
+            showToast(`Representante "${name}" cadastrado! Senha/PIN: ${pin}`, "success");
+            renderAdminRepsList();
+        };
+
+        window.renderAdminAdminsList = () => {
+            const list = document.getElementById('adminAdminsList');
+            const searchTerm = (document.getElementById('searchAdminsInput')?.value || '').toLowerCase().trim();
+            if (!list) return;
+            list.innerHTML = '';
+            const filteredAdmins = allAdmins.filter(adm => (adm.name || '').toLowerCase().includes(searchTerm) || (adm.pin || '').toString().includes(searchTerm));
+
+            if (allAdmins.length === 0) {
+                list.innerHTML = `<p class="text-sm text-slate-500 italic col-span-2">Nenhum administrador cadastrado.</p>`;
+                return;
+            }
+
+            filteredAdmins.forEach(adm => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">${adm.name}</p>
+                            <p class="text-xs text-slate-500">Senha: <strong class="text-slate-800 font-mono tracking-wider">${adm.pin}</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="abrirModalEditarSenha('${adm.id}', 'admin', '${adm.name}', '${adm.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="removerAdmin('${adm.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.renderAdminDriversList = () => {
+            const list = document.getElementById('adminDriversList');
+            const select = document.getElementById('selectDriverForRoute');
+            const searchRepDriver = document.getElementById('searchRepDriverInput');
+            const searchTerm = (document.getElementById('searchDriversInput')?.value || '').toLowerCase().trim();
+            
+            if (select) {
+                const currentVal = select.value;
+                select.innerHTML = '<option value="">Selecione o Motorista...</option>';
+                allDrivers.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.name;
+                    opt.textContent = d.name;
+                    if (d.name === currentVal) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            }
+
+            if (searchRepDriver) {
+                const currentVal = searchRepDriver.value;
+                searchRepDriver.innerHTML = '<option value="">Todos os Motoristas...</option>';
+                allDrivers.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.name;
+                    opt.textContent = d.name;
+                    if (d.name === currentVal) opt.selected = true;
+                    searchRepDriver.appendChild(opt);
+                });
+            }
+
+            if (!list) return;
+            list.innerHTML = '';
+            const filteredDrivers = allDrivers.filter(driver => (driver.name || '').toLowerCase().includes(searchTerm) || (driver.pin || '').toString().includes(searchTerm));
+
+            if (allDrivers.length === 0) {
+                list.innerHTML = `<p class="text-sm text-slate-500 italic col-span-2">Nenhum motorista cadastrado.</p>`;
+                return;
+            }
+
+            filteredDrivers.forEach(driver => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">${driver.name}</p>
+                            <p class="text-xs text-slate-500">Senha / PIN: <strong class="text-emerald-600 font-mono tracking-wider">${driver.pin}</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="abrirModalEditarSenha('${driver.id}', 'driver', '${driver.name}', '${driver.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="removerMotorista('${driver.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.renderAdminRepsList = () => {
+            const list = document.getElementById('adminRepsList');
+            const selectRoute = document.getElementById('selectRepForRoute');
+            const selectModal = document.getElementById('selectRepModalInput');
+            const searchTerm = (document.getElementById('searchRepsInput')?.value || '').toLowerCase().trim();
+
+            if (selectRoute) {
+                const currentVal = selectRoute.value;
+                selectRoute.innerHTML = '<option value="">Nenhum Representante</option>';
+                allReps.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.name;
+                    opt.textContent = r.name;
+                    if (r.name === currentVal) opt.selected = true;
+                    selectRoute.appendChild(opt);
+                });
+            }
+
+            if (selectModal) {
+                const currentVal = selectModal.value;
+                selectModal.innerHTML = '<option value="">Nenhum Representante</option>';
+                allReps.forEach(r => {
+                    const opt = document.createElement('option');
+                    opt.value = r.name;
+                    opt.textContent = r.name;
+                    if (r.name === currentVal) opt.selected = true;
+                    selectModal.appendChild(opt);
+                });
+            }
+
+            if (!list) return;
+            list.innerHTML = '';
+            const filteredReps = allReps.filter(rep => (rep.name || '').toLowerCase().includes(searchTerm) || (rep.pin || '').toString().includes(searchTerm));
+
+            if (allReps.length === 0) {
+                list.innerHTML = `<p class="text-sm text-slate-500 italic col-span-2">Nenhum representante cadastrado.</p>`;
+                return;
+            }
+
+            filteredReps.forEach(rep => {
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">${rep.name}</p>
+                            <p class="text-xs text-slate-500">Senha / PIN: <strong class="text-purple-600 font-mono tracking-wider">${rep.pin}</strong></p>
+                        </div>
+                    </div>
+                    <div class="flex gap-1">
+                        <button onclick="abrirModalEditarSenha('${rep.id}', 'rep', '${rep.name}', '${rep.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="removerRepresentante('${rep.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.renderAdminDashboard = () => {
+            const activeCountElem = document.getElementById('dashActiveCount');
+            const archivedCountElem = document.getElementById('dashArchivedCount');
+            const citiesCountElem = document.getElementById('dashCitiesCount');
+            const driversMonthlyListElem = document.getElementById('dashDriversMonthlyList');
+
+            if (!activeCountElem) return;
+
+            const activeRoutes = allRoutes.filter(r => r.status === 'active');
+            const archivedRoutes = allRoutes.filter(r => r.status === 'archived');
+
+            activeCountElem.innerText = activeRoutes.length;
+            archivedCountElem.innerText = archivedRoutes.length;
+
+            let totalCidadesAtendidas = 0;
+            allRoutes.forEach(r => {
+                if (r.stops && r.stops.length > 2) {
+                    const entregas = r.stops.slice(1, -1);
+                    totalCidadesAtendidas += entregas.filter(s => s.concluido).length;
+                }
+            });
+            citiesCountElem.innerText = totalCidadesAtendidas;
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            let driverCounts = {};
+            allDrivers.forEach(d => { driverCounts[d.name] = 0; });
+
+            allRoutes.forEach(r => {
+                const routeDate = new Date(r.finishedAt || r.createdAt);
+                if (routeDate.getMonth() === currentMonth && routeDate.getFullYear() === currentYear) {
+                    if (r.driverName) {
+                        driverCounts[r.driverName] = (driverCounts[r.driverName] || 0) + 1;
+                    }
+                }
+            });
+
+            driversMonthlyListElem.innerHTML = '';
+            const driverNames = Object.keys(driverCounts);
+            if (driverNames.length === 0) {
+                driversMonthlyListElem.innerHTML = `<p class="text-xs text-slate-500 italic col-span-2">Nenhum motorista registrado este mês.</p>`;
+                return;
+            }
+
+            driverNames.forEach(dName => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 border border-slate-200 p-3.5 rounded-xl flex items-center justify-between";
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-[#152e50]/10 text-[#152e50] flex items-center justify-center font-bold text-xs">
+                            <i class="fa-solid fa-truck"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800 text-xs">${dName}</p>
+                            <p class="text-[11px] text-slate-500">Cargas carregadas no mês</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 rounded-lg bg-[#152e50] text-white font-extrabold text-xs shadow-sm">${driverCounts[dName]}</span>
+                `;
+                driversMonthlyListElem.appendChild(card);
+            });
+        };
+
+        window.pedirConfirmacao = (titulo, mensagem, acao) => {
+            document.getElementById('confirmTitle').innerText = titulo;
+            document.getElementById('confirmMessage').innerText = mensagem;
+            const btn = document.getElementById('confirmBtnAction');
+            btn.onclick = async () => {
+                await acao();
+                window.fecharModalConfirmacao();
+            };
+            document.getElementById('confirmModal').classList.remove('hidden');
+        };
+
+        window.fecharModalConfirmacao = () => {
+            document.getElementById('confirmModal').classList.add('hidden');
+        };
+
+        window.removerAdmin = (id) => {
+            if (allAdmins.length <= 1) return showToast("Atenção: Não é possível remover o único administrador do sistema.", "error");
+            window.pedirConfirmacao("Remover Admin", "Tem certeza que deseja remover este administrador?", async () => {
+                if (useFirebase) {
+                    await deleteDoc(doc(db, `artifacts/${appId}/public/data/admins`, id));
+                } else {
+                    const admins = LocalDb.get('admins').filter(d => d.id !== id);
+                    LocalDb.set('admins', admins);
+                }
+                showToast("Administrador removido", "success");
+            });
+        };
+
+        window.removerMotorista = (id) => {
+            window.pedirConfirmacao("Remover Motorista", "Tem certeza que deseja remover este motorista?", async () => {
+                if (useFirebase) {
+                    await deleteDoc(doc(db, `artifacts/${appId}/public/data/drivers`, id));
+                } else {
+                    const drivers = LocalDb.get('drivers').filter(d => d.id !== id);
+                    LocalDb.set('drivers', drivers);
+                }
+                showToast("Motorista removido", "success");
+                renderAdminDriversList();
+            });
+        };
+
+        window.removerRepresentante = (id) => {
+            window.pedirConfirmacao("Remover Representante", "Tem certeza que deseja remover este representante?", async () => {
+                if (useFirebase) {
+                    await deleteDoc(doc(db, `artifacts/${appId}/public/data/representatives`, id));
+                } else {
+                    const reps = LocalDb.get('representatives').filter(r => r.id !== id);
+                    LocalDb.set('representatives', reps);
+                }
+                showToast("Representante removido", "success");
+                renderAdminRepsList();
+            });
+        };
+
+        function extrairPontosDaUrl(url) {
+            let pontos = [];
+            try {
+                if (url.includes('/dir/')) {
+                    const trechoDir = url.split('/dir/')[1].split('/@')[0].split('?')[0];
+                    const segmentos = trechoDir.split('/');
+                    for (let seg of segmentos) {
+                        let limpo = decodeURIComponent(seg.replace(/\+/g, ' ')).trim();
+                        if (limpo && !limpo.startsWith('data=') && !limpo.startsWith('am=') && !limpo.includes('!3m')) {
+                            pontos.push(limpo);
+                        }
+                    }
+                } else if (url.includes('/place/')) {
+                    const trechoPlace = url.split('/place/')[1].split('/@')[0].split('?')[0];
+                    let limpo = decodeURIComponent(trechoPlace.replace(/\+/g, ' ')).trim();
+                    if (limpo) pontos.push(limpo);
+                }
+            } catch(e) {}
+
+            if (pontos.length === 0) {
+                pontos = url.split(/[\n,]+/).map(s => s.trim()).filter(Boolean);
+            }
+            return pontos;
+        }
+
+        function formatarTextoParada(textoOriginal, isFirst, isLast) {
+            if (!textoOriginal) return '';
+            let textoLower = textoOriginal.toLowerCase();
+            let ehJequie = textoLower.includes('jequié') || textoLower.includes('jequie');
+
+            if (isFirst) {
+                if (ehJequie) return "Iniciar Rota";
+                else return `${textoOriginal} - Iniciar Rota`;
+            } else if (isLast) {
+                if (ehJequie) return "Finalizar Rota";
+                else return `${textoOriginal} - Finalizar Rota`;
+            }
+            return textoOriginal;
+        }
+
+        function formatarDataHora(timestamp) {
+            if (!timestamp) return '-';
+            const d = new Date(timestamp);
+            return `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
+        }
+
+        window.gerarEAtribuirRota = async () => {
+            const rawInput = document.getElementById('urlInput').value.trim();
+            const cargoNumber = document.getElementById('cargoNumberInput').value.trim();
+            const driverNameInput = document.getElementById('selectDriverForRoute').value.trim();
+            const repNameInput = document.getElementById('selectRepForRoute').value.trim();
+
+            if (!rawInput) return showToast("Cole um link do Maps ou digite os endereços.", "error");
+            if (!driverNameInput) return showToast("Selecione um motorista.", "error");
+
+            const driver = allDrivers.find(d => d.name.toLowerCase() === driverNameInput.toLowerCase());
+            if (!driver) return showToast("Motorista não encontrado cadastrado no sistema.", "error");
+
+            const rep = repNameInput ? allReps.find(r => r.name.toLowerCase() === repNameInput.toLowerCase()) : null;
+
+            try {
+                let pontosText = extrairPontosDaUrl(rawInput);
+                if (pontosText.length === 0) throw new Error("Não foi possível identificar paradas válidas.");
+
+                const stops = pontosText.map((texto, idx) => {
+                    const isFirst = (idx === 0);
+                    const isLast = (idx === pontosText.length - 1);
+                    return {
+                        textoOriginal: texto,
+                        texto: formatarTextoParada(texto, isFirst, isLast),
+                        concluido: false
+                    };
+                });
+
+                const nowTime = Date.now();
+                const routeData = {
+                    driverId: driver.id,
+                    driverName: driver.name,
+                    repId: rep ? rep.id : null,
+                    repName: rep ? rep.name : null,
+                    numeroCarga: cargoNumber,
+                    stops: stops,
+                    rawUrl: rawInput,
+                    createdAt: nowTime,
+                    startedAt: nowTime,
+                    finishedAt: null,
+                    status: 'active'
+                };
+
+                if (useFirebase) {
+                    await addDoc(collection(db, `artifacts/${appId}/public/data/routes`), routeData);
+                } else {
+                    const routes = LocalDb.get('routes');
+                    routes.push({ id: `route_${Date.now()}`, ...routeData });
+                    LocalDb.set('routes', routes);
+                }
+
+                document.getElementById('urlInput').value = '';
+                document.getElementById('cargoNumberInput').value = '';
+                document.getElementById('selectDriverForRoute').value = '';
+                document.getElementById('selectRepForRoute').value = '';
+                showToast("Rota criada com sucesso!", "success");
+
+                document.getElementById('searchRoutesInput')?.scrollIntoView({ behavior: 'smooth' });
+                renderAdminDashboard();
+
+            } catch (err) {
+                showToast(err.message || "Erro ao processar rota", "error");
+            }
+        };
+
+        window.abrirModalEnviarRep = (routeId) => {
+            const selectModal = document.getElementById('selectRepModalInput');
+            const route = allRoutes.find(r => r.id === routeId);
+            if (selectModal) {
+                selectModal.value = (route && route.repName) ? route.repName : '';
+            }
+            document.getElementById('targetRouteIdForRep').value = routeId;
+            document.getElementById('modalAssignRep').classList.remove('hidden');
+        };
+
+        window.fecharModalAssignRep = () => {
+            document.getElementById('modalAssignRep').classList.add('hidden');
+        };
+
+        window.salvarRepresentanteRota = async () => {
+            const routeId = document.getElementById('targetRouteIdForRep').value;
+            const repNameInput = document.getElementById('selectRepModalInput').value.trim();
+            const rep = repNameInput ? allReps.find(r => r.name.toLowerCase() === repNameInput.toLowerCase()) : null;
+
+            if (useFirebase) {
+                await updateDoc(doc(db, `artifacts/${appId}/public/data/routes`, routeId), {
+                    repId: rep ? rep.id : null,
+                    repName: rep ? rep.name : null
+                });
+            } else {
+                const routes = LocalDb.get('routes');
+                const idx = routes.findIndex(r => r.id === routeId);
+                if (idx !== -1) {
+                    routes[idx].repId = rep ? rep.id : null;
+                    routes[idx].repName = rep ? rep.name : null;
+                    LocalDb.set('routes', routes);
+                }
+            }
+
+            window.fecharModalAssignRep();
+            showToast(rep ? `Rota vinculada e enviada para ${rep.name}!` : "Vínculo com representante removido.", "success");
+        };
+
+        window.renderAdminRoutesList = () => {
+            const list = document.getElementById('adminRoutesList');
+            const summaryText = document.getElementById('adminActiveCountSummary');
+            const searchTerm = (document.getElementById('searchRoutesInput')?.value || '').toLowerCase().trim();
+            if (!list) return;
+            list.innerHTML = '';
+            
+            let activeRoutes = allRoutes.filter(r => r.status === 'active').sort((a,b) => b.createdAt - a.createdAt);
+
+            if (summaryText) {
+                summaryText.innerText = `Total de ${activeRoutes.length} carga(s) ativa(s) no momento`;
+            }
+
+            if (searchTerm) {
+                activeRoutes = activeRoutes.filter(r => {
+                    const matchDriver = (r.driverName || '').toLowerCase().includes(searchTerm);
+                    const matchRep = (r.repName || '').toLowerCase().includes(searchTerm);
+                    const matchCarga = (r.numeroCarga || '').toLowerCase().includes(searchTerm);
+                    const matchStops = r.stops?.some(s => (s.texto || s.textoOriginal || '').toLowerCase().includes(searchTerm));
+                    return matchDriver || matchRep || matchCarga || matchStops;
+                });
+            }
+
+            if (activeRoutes.length === 0) {
+                list.innerHTML = `<p class="text-sm text-slate-500 italic p-3">Nenhuma rota ativa encontrada.</p>`;
+                return;
+            }
+
+            activeRoutes.forEach(route => {
+                const entregas = route.stops.slice(1, -1);
+                const totalCidades = entregas.length;
+                const concluidasCidades = entregas.filter(s => s.concluido).length;
+                const percent = totalCidades > 0 ? Math.round((concluidasCidades / totalCidades) * 100) : 0;
+                
+                let mapsHref = "https://www.google.com/maps";
+                if (route.rawUrl && route.rawUrl.trim() !== '') {
+                    let link = route.rawUrl.trim();
+                    if (link.startsWith('http://') || link.startsWith('https://')) {
+                        mapsHref = link;
+                    } else {
+                        mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
+                    }
+                }
+
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
+                div.innerHTML = `
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-truck text-emerald-500"></i> ${route.driverName}</p>
+                                ${route.numeroCarga ? `<span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2.5 py-1 rounded-md border border-emerald-100 whitespace-nowrap inline-flex items-center gap-1"><i class="fa-solid fa-barcode text-[10px]"></i>Carga: ${route.numeroCarga}</span>` : ''}
+                                ${route.repName ? `<span class="bg-purple-50 text-purple-700 text-[11px] font-bold px-2.5 py-1 rounded-md border border-purple-100 whitespace-nowrap inline-flex items-center gap-1"><i class="fa-solid fa-briefcase text-[10px]"></i>Rep: ${route.repName}</span>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-500">Início: ${formatarDataHora(route.startedAt || route.createdAt)} • ${totalCidades} cidades</p>
+                        </div>
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <a href="${mapsHref}" target="_blank" class="flex-1 sm:flex-initial text-xs text-emerald-700 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-lg transition-all font-medium flex items-center justify-center gap-1 whitespace-nowrap">
+                                <i class="fa-solid fa-map-location-dot text-xs"></i> Maps
+                            </a>
+                            <button onclick="abrirModalEnviarRep('${route.id}')" class="flex-1 sm:flex-initial text-xs text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-2 rounded-lg transition-all font-medium flex items-center justify-center gap-1 whitespace-nowrap">
+                                <i class="fa-solid fa-paper-plane text-xs"></i> Enviar Rep
+                            </button>
+                            <button onclick="visualizarRotaAdmin('${route.id}')" class="flex-1 sm:flex-initial text-xs text-emerald-600 bg-emerald-50 hover:bg-emerald-100 px-3 py-2 rounded-lg transition-all font-medium flex items-center justify-center gap-1 whitespace-nowrap">
+                                <i class="fa-solid fa-eye text-xs"></i> Visualizar
+                            </button>
+                            <button onclick="encerrarRotaAdmin('${route.id}')" class="flex-1 sm:flex-initial text-xs text-rose-500 bg-rose-50 hover:bg-rose-100 px-3 py-2 rounded-lg transition-all font-medium flex items-center justify-center gap-1 whitespace-nowrap">
+                                Encerrar
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between text-xs font-semibold mb-1">
+                            <span class="text-slate-600">Progresso</span>
+                            <span class="text-emerald-600">${concluidasCidades}/${totalCidades} (${percent}%)</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-1.5">
+                            <div class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.renderAdminArchivedRoutesList = () => {
+            const list = document.getElementById('adminArchivedRoutesList');
+            const summaryContainer = document.getElementById('adminArchivedSummary');
+            const searchTerm = (document.getElementById('searchArchivedRoutesInput')?.value || '').toLowerCase().trim();
+            
+            if (!list || !summaryContainer) return;
+
+            let archivedRoutes = allRoutes.filter(r => r.status === 'archived').sort((a,b) => (b.finishedAt || b.createdAt) - (a.finishedAt || a.createdAt));
+
+            let monthlyCounts = {};
+            archivedRoutes.forEach(r => {
+                const dateObj = new Date(r.finishedAt || r.createdAt);
+                const monthName = dateObj.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+                const capitalized = monthName.charAt(0).toUpperCase() + monthName.slice(1);
+                monthlyCounts[capitalized] = (monthlyCounts[capitalized] || 0) + 1;
+            });
+
+            summaryContainer.innerHTML = '';
+            const monthsKeys = Object.keys(monthlyCounts);
+            if (monthsKeys.length === 0) {
+                summaryContainer.innerHTML = `<div class="bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs text-slate-500 col-span-3 text-center">Nenhum mês registrado com cargas finalizadas.</div>`;
+            } else {
+                monthsKeys.forEach(mKey => {
+                    const cardM = document.createElement('div');
+                    cardM.className = "bg-emerald-50 border border-emerald-200 p-3 rounded-xl flex items-center justify-between";
+                    cardM.innerHTML = `
+                        <div>
+                            <p class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">${mKey}</p>
+                            <p class="text-sm font-extrabold text-emerald-900">${monthlyCounts[mKey]} Carga(s) Entregue(s)</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-lg bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-calendar-days"></i>
+                        </div>
+                    `;
+                    summaryContainer.appendChild(cardM);
+                });
+            }
+
+            if (searchTerm) {
+                archivedRoutes = archivedRoutes.filter(r => {
+                    const matchDriver = (r.driverName || '').toLowerCase().includes(searchTerm);
+                    const matchRep = (r.repName || '').toLowerCase().includes(searchTerm);
+                    const matchCarga = (r.numeroCarga || '').toLowerCase().includes(searchTerm);
+                    return matchDriver || matchRep || matchCarga;
+                });
+            }
+
+            list.innerHTML = '';
+            if (archivedRoutes.length === 0) {
+                list.innerHTML = `<p class="text-sm text-slate-500 italic p-3">Nenhuma rota finalizada armazenada.</p>`;
+                return;
+            }
+
+            archivedRoutes.forEach(route => {
+                const entregas = route.stops.slice(1, -1);
+                const totalCidades = entregas.length;
+
+                const div = document.createElement('div');
+                div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+                div.innerHTML = `
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <p class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-truck text-emerald-600 mr-1"></i> ${route.driverName}</p>
+                            ${route.numeroCarga ? `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-0.5 rounded border border-slate-200">Carga: ${route.numeroCarga}</span>` : ''}
+                            ${route.repName ? `<span class="bg-purple-50 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded border border-purple-100">Rep: ${route.repName}</span>` : ''}
+                        </div>
+                        <p class="text-xs text-slate-400">Finalizada em: ${formatarDataHora(route.finishedAt || route.createdAt)} • Total: ${totalCidades} cidades entregues</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button onclick="visualizarRotaAdmin('${route.id}')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-all">
+                            <i class="fa-solid fa-eye mr-1"></i> Ver Detalhes
+                        </button>
+                    </div>
+                `;
+                list.appendChild(div);
+            });
+        };
+
+        window.visualizarRotaAdmin = (routeId) => {
+            const route = allRoutes.find(r => r.id === routeId);
+            if (!route) return;
+
+            const entregas = route.stops.slice(1, -1);
+            const totalCidades = entregas.length;
+            const concluidasCidades = entregas.filter(s => s.concluido).length;
+            const percent = totalCidades > 0 ? Math.round((concluidasCidades / totalCidades) * 100) : 0;
+
+            const isRep = (currentUserRole === 'representative');
+            const primaryColorClass = isRep ? 'bg-purple-600' : 'bg-[#152e50]';
+            const primaryTextClass = isRep ? 'text-purple-200' : 'text-slate-300';
+
+            document.getElementById('modalRouteHeader').className = `${primaryColorClass} p-4 text-white flex items-center justify-between`;
+            document.getElementById('modalRouteDriver').innerHTML = `<i class="fa-solid fa-truck ${primaryTextClass}"></i> ${route.driverName}`;
+            document.getElementById('modalRouteSubtitle').innerText = route.numeroCarga ? `Carga: ${route.numeroCarga}${route.repName ? ' | Rep: ' + route.repName : ''} • ${totalCidades} cidades` : `${totalCidades} cidades`;
+
+            document.getElementById('modalRouteProgressText').innerText = `${concluidasCidades} de ${totalCidades} cidades (${percent}%)`;
+            document.getElementById('modalRouteProgressBar').className = `${primaryColorClass} h-2 rounded-full transition-all duration-300`;
+            document.getElementById('modalRouteProgressBar').style.width = `${percent}%`;
+
+            const stopsList = document.getElementById('modalRouteStopsList');
+            stopsList.innerHTML = '';
+
+            route.stops.forEach((stop, idx) => {
+                const isFirst = (idx === 0);
+                const isLast = (idx === route.stops.length - 1);
+                const txt = stop.texto || formatarTextoParada(stop.textoOriginal || stop.texto, isFirst, isLast);
+
+                let badgeContent = isFirst ? '<i class="fa-solid fa-play text-[10px]"></i>' : isLast ? '<i class="fa-solid fa-flag-checkered text-[10px]"></i>' : idx;
+
+                const item = document.createElement('div');
+                item.className = `p-3.5 rounded-xl border flex items-center justify-between gap-3 text-xs ${stop.concluido ? 'bg-emerald-50/80 border-emerald-200' : 'bg-white border-slate-200 shadow-sm'}`;
+
+                item.innerHTML = `
+                    <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                        <span class="w-6 h-6 rounded-full ${stop.concluido ? 'bg-emerald-500' : isFirst ? primaryColorClass : isLast ? 'bg-rose-600' : 'bg-slate-700'} text-white font-bold text-[10px] flex items-center justify-center shrink-0">
+                            ${stop.concluido ? '<i class="fa-solid fa-check text-[10px]"></i>' : badgeContent}
+                        </span>
+                        <span class="font-medium truncate ${stop.concluido ? 'line-through text-emerald-800' : 'text-slate-800'}">${txt}</span>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-md font-bold text-[10px] shrink-0 ${stop.concluido ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'}">
+                        ${stop.concluido ? 'Concluída' : 'Pendente'}
+                    </span>
+                `;
+                stopsList.appendChild(item);
+            });
+
+            document.getElementById('modalViewRoute').classList.remove('hidden');
+        };
+
+        window.fecharModalVisualizarRota = () => {
+            document.getElementById('modalViewRoute').classList.add('hidden');
+        };
+
+        window.encerrarRotaAdmin = (id) => {
+            window.pedirConfirmacao("Encerrar Rota", "Deseja encerrar e arquivar esta rota?", async () => {
+                const nowTime = Date.now();
+                if (useFirebase) {
+                    await updateDoc(doc(db, `artifacts/${appId}/public/data/routes`, id), { status: 'archived', finishedAt: nowTime });
+                } else {
+                    const routes = LocalDb.get('routes');
+                    const idx = routes.findIndex(r => r.id === id);
+                    if (idx !== -1) { routes[idx].status = 'archived'; routes[idx].finishedAt = nowTime; LocalDb.set('routes', routes); }
+                }
+                showToast("Rota encerrada e movida para finalizadas.", "success");
+                renderAdminRoutesList();
+                renderAdminArchivedRoutesList();
+                renderAdminDashboard();
+            });
+        };
+
+        function renderDriverDashboard() {
+            const myRoutes = allRoutes.filter(r => r.driverId === currentDriverId && r.status === 'active');
+            const noRouteDiv = document.getElementById('driverNoRoute');
+            const activeRouteDiv = document.getElementById('driverActiveRoute');
+            const btnOpenMaps = document.getElementById('btnOpenMaps');
+            
+            if (myRoutes.length === 0) {
+                noRouteDiv.classList.remove('hidden');
+                activeRouteDiv.classList.add('hidden');
+                btnOpenMaps.classList.add('hidden');
+                return;
+            }
+
+            const activeRoute = myRoutes.sort((a,b) => b.createdAt - a.createdAt)[0];
+            noRouteDiv.classList.add('hidden');
+            activeRouteDiv.classList.remove('hidden');
+            btnOpenMaps.classList.remove('hidden');
+
+            if (activeRoute.rawUrl && activeRoute.rawUrl.trim() !== '') {
+                let link = activeRoute.rawUrl.trim();
+                btnOpenMaps.href = (link.startsWith('http://') || link.startsWith('https://')) ? link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
+            } else {
+                btnOpenMaps.href = `https://www.google.com/maps`;
+            }
+
+            const entregas = activeRoute.stops.slice(1, -1);
+            const totalCidades = entregas.length;
+            const concluidasCidades = entregas.filter(s => s.concluido).length;
+            const percent = totalCidades > 0 ? Math.round((concluidasCidades / totalCidades) * 100) : 0;
+
+            const cargoDisplay = document.getElementById('driverCargoNumberDisplay');
+            if (activeRoute.numeroCarga) {
+                cargoDisplay.innerHTML = `<i class="fa-solid fa-barcode text-xs mr-1"></i> Carga: ${activeRoute.numeroCarga}`;
+                cargoDisplay.classList.remove('hidden');
+            } else {
+                cargoDisplay.classList.add('hidden');
+            }
+
+            document.getElementById('driverProgressBadge').innerText = `${concluidasCidades}/${totalCidades} (${percent}%)`;
+            document.getElementById('driverProgressBar').style.width = `${percent}%`;
+
+            document.getElementById('driverStartTime').innerText = formatarDataHora(activeRoute.startedAt || activeRoute.createdAt);
+            document.getElementById('driverEndTime').innerText = activeRoute.finishedAt ? formatarDataHora(activeRoute.finishedAt) : (concluidasCidades === totalCidades && totalCidades > 0 ? formatarDataHora(Date.now()) : 'Em andamento');
+
+            const list = document.getElementById('driverStopsList');
+            list.innerHTML = '';
+
+            activeRoute.stops.forEach((stop, index) => {
+                const isFirst = (index === 0);
+                const isLast = (index === activeRoute.stops.length - 1);
+                const textoExibicao = stop.texto || formatarTextoParada(stop.textoOriginal || stop.texto, isFirst, isLast);
+                
+                let badgeContent = isFirst ? '<i class="fa-solid fa-play text-xs"></i>' : isLast ? '<i class="fa-solid fa-flag-checkered text-xs"></i>' : index;
+
+                const div = document.createElement('div');
+                div.className = `p-4 rounded-xl border transition-all flex items-center justify-between gap-3 ${stop.concluido ? 'bg-emerald-50/70 border-emerald-200' : 'bg-white border-slate-200 shadow-sm'}`;
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <span class="w-8 h-8 rounded-full ${stop.concluido ? 'bg-emerald-500' : isFirst ? 'bg-emerald-600' : isLast ? 'bg-rose-600' : 'bg-slate-700'} text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                            ${stop.concluido ? '<i class="fa-solid fa-check text-sm"></i>' : badgeContent}
+                        </span>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-semibold ${stop.concluido ? 'line-through text-emerald-800' : 'text-slate-800'} truncate">${textoExibicao}</p>
+                            <span class="text-xs ${stop.concluido ? 'text-emerald-600 font-bold' : 'text-slate-400'} font-medium">
+                                ${stop.concluido ? '✓ Concluído' : isFirst ? 'Início da Rota' : isLast ? 'Fim da Rota' : 'Entrega'}
+                            </span>
+                        </div>
+                    </div>
+                    <button onclick="toggleStopStatus('${activeRoute.id}', ${index}, ${stop.concluido})" class="shrink-0 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${stop.concluido ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200'}">
+                        <i class="fa-solid ${stop.concluido ? 'fa-undo' : 'fa-check'} text-sm"></i>
+                        <span>${stop.concluido ? 'Desfazer' : 'Concluir'}</span>
+                    </button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        window.alternarAbaRepresentante = (tab) => {
+            repCurrentTab = tab;
+            const btnAtivas = document.getElementById('repTabAtivas');
+            const btnConcluidas = document.getElementById('repTabConcluidas');
+
+            if (tab === 'ativas') {
+                btnAtivas.className = "flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white font-bold";
+                btnConcluidas.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700";
+            } else {
+                btnConcluidas.className = "flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white font-bold";
+                btnAtivas.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700";
+            }
+            renderRepDashboard();
+        };
+
+        window.pesquisarCargaRepresentante = () => {
+            const cargoQuery = (document.getElementById('searchRepCargoInput')?.value || '').toLowerCase().trim();
+            const driverQuery = (document.getElementById('searchRepDriverInput')?.value || '').toLowerCase().trim();
+            const container = document.getElementById('repSearchResultContainer');
+
+            if (!cargoQuery && !driverQuery) {
+                container.classList.add('hidden');
+                return showToast("Digite o número da carga ou selecione o motorista para pesquisar.", "error");
+            }
+
+            let foundList = allRoutes.filter(r => {
+                if (r.status !== 'active') return false;
+                const matchCarga = cargoQuery && (r.numeroCarga || '').toLowerCase().includes(cargoQuery);
+                const matchDriver = driverQuery && (r.driverName || '').toLowerCase() === driverQuery;
+                return matchCarga || matchDriver;
+            });
+
+            if (foundList.length === 0) {
+                container.classList.remove('hidden');
+                container.innerHTML = `<div class="bg-white p-4 rounded-xl border border-rose-200 text-center text-xs text-rose-600 font-semibold">Nenhuma carga ativa encontrada com esses critérios.</div>`;
+                return;
+            }
+
+            container.classList.remove('hidden');
+            let htmlContent = `
+                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-purple-800 uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass mr-1"></i> Resultados Encontrados (${foundList.length})</span>
+                        <button onclick="document.getElementById('repSearchResultContainer').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+            `;
+
+            foundList.forEach(found => {
+                htmlContent += `
+                    <div class="bg-white p-3 rounded-xl border border-purple-100 flex items-center justify-between gap-2">
+                        <div>
+                            <p class="font-bold text-slate-800 text-sm">${found.numeroCarga ? 'Carga: ' + found.numeroCarga : 'Carga sem número'} • Motorista: ${found.driverName}</p>
+                            <p class="text-xs text-slate-500">Deseja acompanhar essa carga?</p>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="adicionarAcompanhamentoRep('${found.id}')" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1" title="Sim, acompanhar">
+                                <i class="fa-solid fa-check"></i> Sim
+                            </button>
+                            <button onclick="this.closest('.bg-white').remove()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold" title="Cancelar / X">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            htmlContent += `</div>`;
+            container.innerHTML = htmlContent;
+        };
+
+        window.adicionarAcompanhamentoRep = (routeId) => {
+            let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+            if (!tracked.includes(routeId)) {
+                tracked.push(routeId);
+                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
+            }
+            document.getElementById('repSearchResultContainer').classList.add('hidden');
+            document.getElementById('searchRepCargoInput').value = '';
+            document.getElementById('searchRepDriverInput').value = '';
+            showToast("Carga adicionada aos seus acompanhamentos!", "success");
+            renderRepDashboard();
+        };
+
+        window.deixarDeAcompanharRep = (routeId) => {
+            window.pedirConfirmacao("Deixar de Acompanhar", "Tem certeza que deseja remover esta carga do seu painel?", () => {
+                let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+                tracked = tracked.filter(id => id !== routeId);
+                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
+                showToast("Carga removida do acompanhamento.", "success");
+                renderRepDashboard();
+            });
+        };
+
+        function renderRepDashboard() {
+            let trackedIds = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+            
+            let myRoutes = allRoutes.filter(r => {
+                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId;
+                if (repCurrentTab === 'ativas') {
+                    return isTracked && r.status === 'active';
+                } else {
+                    return isTracked && r.status === 'archived';
+                }
+            }).sort((a,b) => b.createdAt - a.createdAt);
+
+            const noRoutesDiv = document.getElementById('repNoRoutes');
+            const activeRoutesList = document.getElementById('repActiveRoutesList');
+
+            if (myRoutes.length === 0) {
+                noRoutesDiv.classList.remove('hidden');
+                activeRoutesList.innerHTML = '';
+                return;
+            }
+
+            noRoutesDiv.classList.add('hidden');
+            activeRoutesList.innerHTML = '';
+
+            myRoutes.forEach(route => {
+                const entregas = route.stops.slice(1, -1);
+                const totalCidades = entregas.length;
+                const concluidasCidades = entregas.filter(s => s.concluido).length;
+
+                let mapsHref = "https://www.google.com/maps";
+                if (route.rawUrl && route.rawUrl.trim() !== '') {
+                    let link = route.rawUrl.trim();
+                    mapsHref = (link.startsWith('http://') || link.startsWith('https://')) ? link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
+                }
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4";
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="font-bold text-slate-800 text-base">
+                                    ${route.numeroCarga ? `Carga: ${route.numeroCarga}` : 'Carga sem número'}
+                                </h3>
+                                <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-100">
+                                    <i class="fa-solid fa-truck mr-1"></i>Motorista: ${route.driverName}
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400">Início: ${formatarDataHora(route.startedAt || route.createdAt)}</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="${route.status === 'archived' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'} text-xs font-bold px-3 py-1.5 rounded-full shrink-0">
+                                ${route.status === 'archived' ? 'Concluída' : `Cidades: ${concluidasCidades}/${totalCidades}`}
+                            </span>
+                            <button onclick="deixarDeAcompanharRep('${route.id}')" class="text-slate-400 hover:text-rose-600 p-1.5" title="Deixar de acompanhar">
+                                <i class="fa-solid fa-xmark text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <button onclick="visualizarRotaAdmin('${route.id}')" class="w-full py-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-purple-200">
+                            <i class="fa-solid fa-eye"></i> Visualizar Rota
+                        </button>
+                        <a href="${mapsHref}" target="_blank" class="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-emerald-200">
+                            <i class="fa-solid fa-map-location-dot"></i> Ver no Maps
+                        </a>
+                    </div>
+                `;
+
+                activeRoutesList.appendChild(card);
+            });
+        }
+
+        window.toggleStopStatus = async (routeId, stopIndex, currentStatus) => {
+            const route = allRoutes.find(r => r.id === routeId);
+            if (!route) return;
+            
+            const newStops = [...route.stops];
+            newStops[stopIndex].concluido = !currentStatus;
+
+            const entregas = newStops.slice(1, -1);
+            const todasConcluidas = entregas.length > 0 && entregas.every(s => s.concluido);
+            const nowTime = Date.now();
+            const finishedAtTime = todasConcluidas ? nowTime : null;
+
+            if (useFirebase) {
+                await updateDoc(doc(db, `artifacts/${appId}/public/data/routes`, routeId), { 
+                    stops: newStops,
+                    finishedAt: finishedAtTime,
+                    startedAt: route.startedAt || route.createdAt
+                });
+            } else {
+                const routes = LocalDb.get('routes');
+                const idx = routes.findIndex(r => r.id === routeId);
+                if (idx !== -1) { 
+                    routes[idx].stops = newStops; 
+                    routes[idx].finishedAt = finishedAtTime;
+                    if (!routes[idx].startedAt) routes[idx].startedAt = routes[idx].createdAt;
+                    LocalDb.set('routes', routes); 
+                }
+            }
+
+            if(!currentStatus && typeof notificationSound.play === 'function'){
+                notificationSound.play().catch(e=>{});
+            }
+        };
+
+        function startAdminListeners() {
+            if (useFirebase) {
+                if (!unsubDrivers) unsubDrivers = onSnapshot(collection(db, `artifacts/${appId}/public/data/drivers`), snap => {
+                    allDrivers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') {
+                        window.renderAdminDriversList();
+                        renderAdminDashboard();
+                    }
+                });
+                if (!unsubReps) unsubReps = onSnapshot(collection(db, `artifacts/${appId}/public/data/representatives`), snap => {
+                    allReps = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') window.renderAdminRepsList();
+                });
+                if (!unsubAdmins) unsubAdmins = onSnapshot(collection(db, `artifacts/${appId}/public/data/admins`), snap => {
+                    allAdmins = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'admin') window.renderAdminAdminsList();
+                });
+            } else {
+                unsubDrivers = LocalDb.subscribe('drivers', data => { allDrivers = data; if(currentUserRole==='admin') { window.renderAdminDriversList(); renderAdminDashboard(); } });
+                unsubReps = LocalDb.subscribe('representatives', data => { allReps = data; if(currentUserRole==='admin') window.renderAdminRepsList(); });
+                unsubAdmins = LocalDb.subscribe('admins', data => { allAdmins = data; if(currentUserRole==='admin') window.renderAdminAdminsList(); });
+                unsubRoutes = LocalDb.subscribe('routes', data => { 
+                    allRoutes = data; 
+                    if(currentUserRole==='admin') {
+                        renderAdminRoutesList();
+                        renderAdminArchivedRoutesList();
+                        renderAdminDashboard();
+                    } else if(currentUserRole==='representative') {
+                        renderRepDashboard();
+                    }
+                });
+            }
+        }
+
+        function startDriverListeners() {
+            if (useFirebase) {
+                if (!unsubRoutes) unsubRoutes = onSnapshot(collection(db, `artifacts/${appId}/public/data/routes`), snap => {
+                    allRoutes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'driver') renderDriverDashboard();
+                });
+            } else {
+                unsubRoutes = LocalDb.subscribe('routes', data => { allRoutes = data; if(currentUserRole==='driver') renderDriverDashboard(); });
+            }
+        }
+
+        function startRepListeners() {
+            if (useFirebase) {
+                if (!unsubRoutes) unsubRoutes = onSnapshot(collection(db, `artifacts/${appId}/public/data/routes`), snap => {
+                    allRoutes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                    if (currentUserRole === 'representative') renderRepDashboard();
+                });
+            } else {
+                unsubRoutes = LocalDb.subscribe('routes', data => { allRoutes = data; if(currentUserRole==='representative') renderRepDashboard(); });
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            let bgClass = type === 'error' ? 'bg-rose-600' : type === 'success' ? 'bg-emerald-600' : 'bg-emerald-600';
+            let icon = type === 'error' ? 'fa-triangle-exclamation' : type === 'success' ? 'fa-check-circle' : 'fa-bell';
+
+            toast.className = `${bgClass} text-white px-4 py-3.5 rounded-xl shadow-lg flex items-center gap-3 transform transition-all duration-300 translate-y-10 opacity-0 pointer-events-auto`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span class="text-sm font-medium">${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-10', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+    </script>
+</body>
+</html>
