@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Rotas & Logística PWA</title>
+    <title>Logística Fibrasol PWA v1.0.3</title>
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,7 +21,7 @@
     <meta name="theme-color" content="#152e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Gestão Rotas">
+    <meta name="apple-mobile-web-app-title" content="Logística Fibrasol">
 
     <style>
         @font-face {
@@ -30,10 +30,18 @@
             font-weight: bold;
             font-style: normal;
         }
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
         body {
             font-family: 'Inter', sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
+        }
+        .font-handel {
+            font-family: 'Handel Gothic D', 'Inter', sans-serif;
+            font-style: italic;
         }
         .hide-scrollbar::-webkit-scrollbar {
             display: none;
@@ -48,22 +56,159 @@
             font-weight: 700;
             background-color: #f8fafc;
         }
+
+        /* Transições Fluídas Suaves Estilo Android Pure (v1.0.3) */
+        @keyframes androidSlideUpPure {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes androidFadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .screen-android-animate {
+            animation: androidSlideUpPure 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            will-change: transform, opacity;
+        }
+
+        .splash-fade-out {
+            animation: androidFadeOut 0.4s ease-out forwards;
+        }
     </style>
 </head>
-<body class="h-full text-slate-800 antialiased flex flex-col justify-between">
+<body class="h-full text-slate-800 antialiased flex flex-col justify-between relative">
 
-    <!-- Container do PWA Alerta de Instalação -->
-    <div id="pwaInstallBanner" class="hidden fixed top-0 left-0 right-0 bg-[#152e50] text-white px-4 py-3 z-50 shadow-xl flex items-center justify-between">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-mobile-screen text-2xl"></i>
-            <div>
-                <p class="text-xs font-bold uppercase tracking-wider text-slate-300">Aplicativo Logístico</p>
-                <p class="text-sm font-semibold">Instalar na tela inicial?</p>
+    <!-- SPLASH SCREEN DE ABERTURA (v1.0.3 - 2 segundos) -->
+    <div id="splashScreen" class="fixed inset-0 bg-[#152e50] z-50 flex flex-col items-center justify-between p-8 text-white select-none">
+        <div></div>
+        
+        <!-- Logo Central / Branding -->
+        <div class="flex flex-col items-center text-center space-y-4">
+            <div class="w-24 h-24 rounded-3xl bg-white/10 flex items-center justify-center p-5 shadow-2xl border border-white/20 backdrop-blur-md">
+                <i class="fa-solid fa-map-location-dot text-4xl text-white"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-wider font-handel text-white drop-shadow-md">
+                LOGÍSTICA FIBRASOL
+            </h1>
+            <p class="text-xs text-slate-300 font-medium tracking-widest uppercase">Sistema de Rotas & Entregas</p>
+        </div>
+
+        <!-- Rodapé do Splash -->
+        <div class="flex items-center gap-2.5 text-xs text-slate-300 bg-white/10 px-4 py-2 rounded-full border border-white/15 backdrop-blur-sm">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="font-medium">Conectando ao Firebase...</span>
+        </div>
+    </div>
+
+    <!-- BOTÃO FLUTUANTE SUPERIOR COM ENGRENAGEM E BADGE DE NOTIFICAÇÃO -->
+    <div class="fixed top-4 right-4 z-40">
+        <button onclick="abrirModalPatchNotes()" class="relative bg-white/90 hover:bg-white text-[#152e50] w-10 h-10 rounded-full shadow-lg border border-slate-200 backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95" title="Menu e Patch Notes">
+            <i class="fa-solid fa-gear text-lg"></i>
+            <span id="patchBadgeNotice" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+        </button>
+    </div>
+
+    <!-- MODAL DE PATCH NOTES E MENU DE ATUALIZAÇÕES DO APP -->
+    <div id="modalPatchNotes" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-[#152e50] text-white flex items-center justify-center font-bold text-xs">
+                        <i class="fa-solid fa-code-branch"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Atualizações do App</h3>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Versão Atual: v1.0.3</p>
+                    </div>
+                </div>
+                <button onclick="fecharModalPatchNotes()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 max-h-[55vh] overflow-y-auto pr-1 text-xs">
+                <!-- Patch v1.0.3 -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
+                    <div class="flex items-center justify-between">
+                        <span class="font-extrabold text-[#152e50] text-xs">Patch v1.0.3</span>
+                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">Versão Atual</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 pl-1">
+                        <li><strong>Menu Flutuante:</strong> Engrenagem no topo com aba de novidades e atualização manual.</li>
+                        <li><strong>Persistência de Sessão:</strong> O app não desloga mais ao recarregar a página no Android.</li>
+                        <li><strong>Gestão de Contas:</strong> Opção de deslogar contas diretamente pelo Painel Admin.</li>
+                        <li><strong>Splash Screen:</strong> Duração de 2 segundos com indicador do Firebase.</li>
+                        <li><strong>Transições Suaves:</strong> Animações estilo Android de 0.5s sem solavancos no layout.</li>
+                    </ul>
+                </div>
+
+                <!-- Patch v1.0.2 -->
+                <div class="bg-slate-50/50 p-3 rounded-xl border border-slate-200 space-y-1 opacity-75">
+                    <span class="font-bold text-slate-700 text-xs">Patch v1.0.2</span>
+                    <p class="text-slate-500">Adição do card/guia de instalação PWA e estatísticas do motorista no dashboard.</p>
+                </div>
+            </div>
+
+            <div class="pt-2 space-y-2 border-t border-slate-100">
+                <button onclick="forcarAtualizacaoPwa()" class="w-full py-3 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrows-rotate"></i> Forçar Atualização do App
+                </button>
+                <button onclick="fecharModalPatchNotes()" class="w-full py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl text-xs hover:bg-slate-200">
+                    Fechar
+                </button>
             </div>
         </div>
-        <div class="flex items-center gap-2">
-            <button onclick="dismissInstallPwa()" class="text-xs text-slate-300 hover:text-white px-3 py-2">Agora não</button>
-            <button onclick="installPwa()" class="text-xs bg-white text-[#152e50] font-bold px-3.5 py-2 rounded-lg shadow">Instalar</button>
+    </div>
+
+    <!-- Indicador de Status do Firebase -->
+    <div id="firebaseStatusWidget" class="fixed bottom-3 left-4 z-40 flex items-center gap-2 bg-slate-900/90 text-white px-3 py-1.5 rounded-full shadow-xl border border-slate-700 text-[11px] font-semibold backdrop-blur-sm pointer-events-none">
+        <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="firebaseStatusText" class="text-slate-300">Conectando...</span>
+    </div>
+
+    <!-- Modal de Guia Passo a Passo para Instalação (Exclusivo Celular) -->
+    <div id="pwaInstallGuideModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-mobile-screen text-[#152e50]"></i> Como Instalar o App no Celular
+                </h3>
+                <button onclick="fecharGuiaInstalacaoPwa()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-4 text-xs text-slate-600">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5"><i class="fa-brands fa-android text-emerald-600"></i> No Android (Chrome):</p>
+                    <ol class="list-decimal list-inside space-y-1 pl-1">
+                        <li>Toque nos <strong>três pontos (⋮)</strong> no canto superior direito.</li>
+                        <li>Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar aplicativo"</strong>.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5"><i class="fa-brands fa-apple text-slate-800"></i> No iPhone (Safari):</p>
+                    <ol class="list-decimal list-inside space-y-1 pl-1">
+                        <li>Toque no botão de <strong>Compartilhar <i class="fa-solid fa-share-nodes"></i></strong> no rodapé.</li>
+                        <li>Role até encontrar e toque em <strong>"Adicionar à Tela de Início"</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+
+            <button onclick="fecharGuiaInstalacaoPwa()" class="w-full py-3 bg-[#152e50] text-white font-bold rounded-xl text-xs uppercase tracking-wider">Entendi</button>
         </div>
     </div>
 
@@ -72,7 +217,7 @@
 
     <!-- Modal de Confirmação Genérica -->
     <div id="confirmModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 text-center">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 text-center screen-android-animate">
             <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-xl">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
@@ -85,12 +230,12 @@
         </div>
     </div>
 
-    <!-- Modal Editar Senha -->
+    <!-- Modal Editar Senha / Deslogar -->
     <div id="modalEditPassword" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-lock text-[#152e50]"></i> Alterar Credenciais
+                    <i class="fa-solid fa-user-gear text-[#152e50]"></i> Gerenciar Credenciais
                 </h3>
                 <button onclick="fecharModalEditarSenha()" class="text-slate-400 hover:text-slate-600 p-2">
                     <i class="fa-solid fa-xmark text-lg"></i>
@@ -105,16 +250,16 @@
             </div>
             <input type="hidden" id="editUserId">
             <input type="hidden" id="editUserType">
-            <div class="flex items-center gap-3 pt-2">
-                <button onclick="fecharModalEditarSenha()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50">Cancelar</button>
-                <button onclick="salvarNovaSenha()" class="flex-1 py-3 rounded-xl bg-[#152e50] text-white font-semibold text-xs hover:bg-[#0f223d] shadow-md">Salvar</button>
+            <div class="flex flex-col gap-2 pt-2">
+                <button onclick="salvarNovaSenha()" class="w-full py-3 rounded-xl bg-[#152e50] text-white font-semibold text-xs hover:bg-[#0f223d] shadow-md">Salvar Alterações</button>
+                <button onclick="fecharModalEditarSenha()" class="w-full py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50">Cancelar</button>
             </div>
         </div>
     </div>
 
     <!-- Modal Enviar / Atribuir Representante -->
     <div id="modalAssignRep" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
                     <i class="fa-solid fa-briefcase text-purple-600"></i> Enviar para Representante
@@ -137,7 +282,7 @@
 
     <!-- Modal Visualização de Rota -->
     <div id="modalViewRoute" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] screen-android-animate">
             <div id="modalRouteHeader" class="bg-[#152e50] p-4 text-white flex items-center justify-between">
                 <div>
                     <h3 id="modalRouteDriver" class="font-bold text-base flex items-center gap-2"></h3>
@@ -164,16 +309,14 @@
     </div>
 
     <!-- TELA INITIAL / MENU DE SELEÇÃO DE ACESSO -->
-    <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200">
+    <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200 relative pb-28 screen-android-animate">
         <div class="w-full max-w-sm space-y-6 text-center">
             <div class="space-y-3">
-                <!-- Ícone Reformulado: Rota de Mapa em tom Azul #152e50 -->
-                <div class="w-22 h-22 w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
+                <div class="w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
                     <i class="fa-solid fa-map-location-dot text-3xl text-white relative z-10 drop-shadow"></i>
                 </div>
-                <!-- Título com tom #152e50 e fonte aumentada -->
-                <h1 class="text-3xl font-extrabold text-[#152e50] tracking-tight" style="font-family: 'Handel Gothic D', sans-serif; font-style: italic;">LOGÍSTICA FIBRASOL</h1>
+                <h1 class="text-3xl font-extrabold text-[#152e50] tracking-tight font-handel">LOGÍSTICA FIBRASOL</h1>
                 <p class="text-xs text-slate-500 font-medium">Selecione seu perfil para acessar o sistema</p>
             </div>
 
@@ -207,18 +350,33 @@
                         <p class="text-xs text-slate-500">Gestão de rotas e equipe</p>
                     </div>
                 </button>
-
-                <button id="btnInstallAppMain" onclick="installPwa()" class="hidden w-full bg-[#152e50] hover:bg-[#0f223d] text-white font-bold py-3.5 px-4 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-wider">
-                    <i class="fa-solid fa-download text-sm"></i> Instalar Aplicativo
-                </button>
             </div>
-            <p class="text-[11px] text-slate-400">PWA v2.5 • Sincronização em Tempo Real</p>
+            <p class="text-[11px] text-slate-400">gbsj17 v1.0.3 • Sincronização em Tempo Real</p>
+        </div>
+
+        <!-- Card Fixo de Instalação (Exclusivo para Celulares / Telas Menores) -->
+        <div id="mobileInstallCard" class="block md:hidden fixed bottom-4 left-4 right-4 z-30 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-slate-200/80">
+            <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#152e50] text-white flex items-center justify-center text-lg shrink-0 shadow-md">
+                        <i class="fa-solid fa-download"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-slate-800">Instalar o aplicativo</p>
+                        <p class="text-[11px] text-slate-500">Acesso rápido na tela inicial</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <button onclick="installPwa()" class="px-3.5 py-2 bg-[#152e50] text-white font-bold rounded-xl text-xs shadow hover:bg-[#0f223d]">Instalar</button>
+                    <button onclick="abrirGuiaInstalacaoPwa()" class="p-2 text-slate-400 hover:text-slate-600" title="Ajuda"><i class="fa-solid fa-circle-question text-base"></i></button>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- TELA DE LOGIN -->
     <div id="screenLogin" class="hidden min-h-full flex flex-col items-center justify-center p-6 bg-slate-50">
-        <div class="w-full max-w-sm bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-5">
+        <div class="w-full max-w-sm bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-5 screen-android-animate">
             <button onclick="voltarParaSelecaoPerfil()" id="loginBackBtn" class="text-xs text-slate-600 flex items-center gap-2 font-bold py-2 px-3 bg-slate-100 rounded-xl transition-all w-fit">
                 <i class="fa-solid fa-arrow-left text-sm"></i> Voltar
             </button>
@@ -265,7 +423,7 @@
                     </div>
                     <div>
                         <h2 class="font-bold text-sm">Painel do Administrador</h2>
-                        <p class="text-[10px] text-slate-300">Gestão Geral de Rotas</p>
+                        <p class="text-[10px] text-slate-300">Gestão Geral de Rotas • v1.0.3</p>
                     </div>
                 </div>
                 <button onclick="fazerLogout()" class="text-xs bg-[#0f223d] hover:bg-[#0a182b] text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700">Sair</button>
@@ -291,7 +449,7 @@
             </div>
         </div>
 
-        <main class="p-4 space-y-6 flex-1 max-w-4xl mx-auto w-full">
+        <main class="p-4 space-y-6 flex-1 max-w-4xl mx-auto w-full screen-android-animate">
             <!-- ABA ROTAS -->
             <div id="contentRotas" class="space-y-6">
                 <!-- CARD 01: Iniciar uma Nova Rota -->
@@ -493,13 +651,38 @@
                 </div>
                 <div>
                     <h2 id="driverWelcomeName" class="font-bold text-sm">Motorista</h2>
-                    <p class="text-[10px] text-emerald-200">Painel de Entregas</p>
+                    <p class="text-[10px] text-emerald-200">Painel de Entregas • v1.0.3</p>
                 </div>
             </div>
             <button onclick="fazerLogout()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-lg border border-emerald-500">Sair</button>
         </header>
 
-        <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-20">
+        <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-20 screen-android-animate">
+            <!-- DASHBOARD/RESUMO DO MOTORISTA -->
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-road"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Km Rodados</p>
+                    <p id="driverKmSummary" class="text-xs font-extrabold text-slate-800 mt-0.5">-- km</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-calendar-day"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dias Viagem</p>
+                    <p id="driverDaysSummary" class="text-xs font-extrabold text-slate-800 mt-0.5">0 dias</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cargas / Mês</p>
+                    <p id="driverMonthlyCargosSummary" class="text-xs font-extrabold text-slate-800 mt-0.5">0</p>
+                </div>
+            </div>
+
             <div id="driverNoRoute" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center space-y-3">
                 <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto text-2xl">
                     <i class="fa-solid fa-clipboard-check"></i>
@@ -544,13 +727,13 @@
                 </div>
                 <div>
                     <h2 id="repWelcomeName" class="font-bold text-sm">Representante</h2>
-                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas</p>
+                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas • v1.0.3</p>
                 </div>
             </div>
             <button onclick="fazerLogout()" class="text-xs bg-purple-800 hover:bg-purple-900 text-white px-3.5 py-2 rounded-lg border border-purple-600">Sair</button>
         </header>
 
-        <main class="p-4 space-y-4 flex-1 max-w-xl mx-auto w-full">
+        <main class="p-4 space-y-4 flex-1 max-w-xl mx-auto w-full screen-android-animate">
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
@@ -599,25 +782,82 @@
         let db = null;
         let useFirebase = false;
         const appId = "pwa-logistica-v2";
+        const CURRENT_VERSION = "v1.0.3";
 
         const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: ""
+            apiKey: "AIzaSyAUCNdX_mMJ2IiMrDGYpMF6qs1USC5KJ0k",
+            authDomain: "app-de-entregas-e5f57.firebaseapp.com",
+            projectId: "app-de-entregas-e5f57",
+            storageBucket: "app-de-entregas-e5f57.firebasestorage.app",
+            messagingSenderId: "995676671271",
+            appId: "1:995676671271:web:6a8a4e25cb0380993fed02",
+            measurementId: "G-SP7RC3KSL2"
         };
+
+        function solicitarPermissaoNotificacoes() {
+            if ("Notification" in window && Notification.permission === "default") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        showToast("Notificações ativadas no dispositivo!", "success");
+                    }
+                });
+            }
+        }
+
+        function vibrarDispositivo(pattern = [100, 50, 100]) {
+            if ("vibrate" in navigator) {
+                try {
+                    navigator.vibrate(pattern);
+                } catch (e) {}
+            }
+        }
+
+        function enviarNotificacaoLocal(titulo, corpo) {
+            vibrarDispositivo([150, 50, 150]);
+            if ("Notification" in window && Notification.permission === "granted") {
+                if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.ready.then(registration => {
+                        registration.showNotification(titulo, {
+                            body: corpo,
+                            icon: 'manifest.json',
+                            vibrate: [150, 50, 150]
+                        });
+                    });
+                } else {
+                    new Notification(titulo, { body: corpo, vibrate: [150, 50, 150] });
+                }
+            }
+        }
+
+        function atualizarStatusConexao(conectado) {
+            const dot = document.getElementById('firebaseStatusDot');
+            const text = document.getElementById('firebaseStatusText');
+
+            if (conectado) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
+                text.innerText = "Firebase Conectado";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
+                text.innerText = "Modo Offline (Local)";
+            }
+        }
 
         if (firebaseConfig.apiKey && firebaseConfig.projectId) {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 useFirebase = true;
+                atualizarStatusConexao(true);
             } catch (e) {
                 console.warn("Erro ao inicializar Firebase. Usando LocalStorage Fallback.", e);
+                atualizarStatusConexao(false);
             }
+        } else {
+            atualizarStatusConexao(false);
         }
+
+        window.addEventListener('online', () => { if(useFirebase) atualizarStatusConexao(true); });
+        window.addEventListener('offline', () => { atualizarStatusConexao(false); });
 
         class LocalStorageManager {
             constructor() {
@@ -665,8 +905,6 @@
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            document.getElementById('pwaInstallBanner')?.classList.remove('hidden');
-            document.getElementById('btnInstallAppMain')?.classList.remove('hidden');
         });
 
         window.installPwa = () => {
@@ -674,22 +912,69 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => {
                     deferredPrompt = null;
-                    document.getElementById('pwaInstallBanner')?.classList.add('hidden');
-                    document.getElementById('btnInstallAppMain')?.classList.add('hidden');
                 });
             } else {
-                showToast("Para instalar, use a opção 'Adicionar à Tela Inicial' do seu navegador.", "info");
+                abrirGuiaInstalacaoPwa();
             }
         };
 
-        window.dismissInstallPwa = () => {
-            document.getElementById('pwaInstallBanner')?.classList.add('hidden');
+        window.abrirGuiaInstalacaoPwa = () => {
+            document.getElementById('pwaInstallGuideModal')?.classList.remove('hidden');
         };
 
+        window.fecharGuiaInstalacaoPwa = () => {
+            document.getElementById('pwaInstallGuideModal')?.classList.add('hidden');
+        };
+
+        window.abrirModalPatchNotes = () => {
+            document.getElementById('modalPatchNotes')?.classList.remove('hidden');
+            localStorage.setItem('app_last_read_version', CURRENT_VERSION);
+            const badge = document.getElementById('patchBadgeNotice');
+            if (badge) badge.classList.add('hidden');
+        };
+
+        window.fecharModalPatchNotes = () => {
+            document.getElementById('modalPatchNotes')?.classList.add('hidden');
+        };
+
+        window.forcarAtualizacaoPwa = () => {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for (let registration of registrations) {
+                        registration.unregister();
+                    }
+                    window.location.reload(true);
+                });
+            } else {
+                window.location.reload(true);
+            }
+        };
+
+        // LÓGICA DO SPLASH SCREEN (2 Segundos cravados)
         window.addEventListener('DOMContentLoaded', async () => {
+            solicitarPermissaoNotificacoes();
             await inicializarContaAdminPadrao();
             await inicializarContaJrPadrao();
-            verificarSessaoSalva();
+
+            // Verificação de Badge de Leitura de Versão
+            const lastRead = localStorage.getItem('app_last_read_version');
+            const badge = document.getElementById('patchBadgeNotice');
+            if (lastRead === CURRENT_VERSION && badge) {
+                badge.classList.add('hidden');
+            }
+
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.classList.add('splash-fade-out');
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        verificarSessaoSalva();
+                    }, 400);
+                } else {
+                    verificarSessaoSalva();
+                }
+            }, 2000);
         });
 
         async function inicializarContaAdminPadrao() {
@@ -727,10 +1012,20 @@
             document.getElementById('dashboardRepresentative').classList.add('hidden');
         }
 
+        function mostrarTelaComAnimacao(idTela) {
+            esconderTodasTelas();
+            const el = document.getElementById(idTela);
+            if (el) {
+                el.classList.remove('hidden');
+                el.classList.remove('screen-android-animate');
+                void el.offsetWidth;
+                el.classList.add('screen-android-animate');
+            }
+        }
+
         window.selecionarPerfil = (role) => {
             selectedRoleForLogin = role;
-            esconderTodasTelas();
-            document.getElementById('screenLogin').classList.remove('hidden');
+            mostrarTelaComAnimacao('screenLogin');
 
             const title = document.getElementById('loginTitle');
             const formAdmin = document.getElementById('formLoginAdmin');
@@ -763,8 +1058,7 @@
         };
 
         window.voltarParaSelecaoPerfil = () => {
-            esconderTodasTelas();
-            document.getElementById('screenRoleSelection').classList.remove('hidden');
+            mostrarTelaComAnimacao('screenRoleSelection');
         };
 
         window.realizarLoginAdmin = (e) => {
@@ -822,10 +1116,12 @@
             }));
         }
 
+        // PERMANÊNCIA CONTINUA DA SESSÃO (Não desloga ao recarregar a página)
         function verificarSessaoSalva() {
             const session = JSON.parse(localStorage.getItem('app_session') || "null");
             if (!session) {
                 carregarDadosIniciais();
+                mostrarTelaComAnimacao('screenRoleSelection');
                 return;
             }
 
@@ -837,10 +1133,10 @@
                 if (currentUserRole === 'admin') iniciarPainelAdmin();
                 else if (currentUserRole === 'driver') {
                     const driver = allDrivers.find(d => d.id === currentDriverId);
-                    if (driver) iniciarPainelMotorista(driver); else fazerLogout();
+                    iniciarPainelMotorista(driver || { id: currentDriverId, name: 'Motorista' });
                 } else if (currentUserRole === 'representative') {
                     const rep = allReps.find(r => r.id === currentRepId);
-                    if (rep) iniciarPainelRepresentante(rep); else fazerLogout();
+                    iniciarPainelRepresentante(rep || { id: currentRepId, name: 'Representante' });
                 }
             });
         }
@@ -875,6 +1171,8 @@
                         renderAdminDashboard();
                     } else if (currentUserRole === 'representative') {
                         renderRepDashboard();
+                    } else if (currentUserRole === 'driver') {
+                        renderDriverDashboard();
                     }
                 });
             } else {
@@ -897,14 +1195,12 @@
             if(unsubRoutes) unsubRoutes();
             if(unsubAdmins) unsubAdmins();
 
-            esconderTodasTelas();
-            document.getElementById('screenRoleSelection').classList.remove('hidden');
+            mostrarTelaComAnimacao('screenRoleSelection');
             showToast("Sessão encerrada com sucesso");
         };
 
         function iniciarPainelAdmin() {
-            esconderTodasTelas();
-            document.getElementById('dashboardAdmin').classList.remove('hidden');
+            mostrarTelaComAnimacao('dashboardAdmin');
             startAdminListeners();
             renderAdminDriversList();
             renderAdminRepsList();
@@ -914,16 +1210,15 @@
         }
 
         function iniciarPainelMotorista(driver) {
-            esconderTodasTelas();
-            document.getElementById('dashboardDriver').classList.remove('hidden');
-            document.getElementById('driverWelcomeName').innerText = `Motorista: ${driver.name}`;
+            mostrarTelaComAnimacao('dashboardDriver');
+            document.getElementById('driverWelcomeName').innerText = `Motorista: ${driver ? driver.name : 'Logado'}`;
             startDriverListeners();
+            renderDriverDashboard();
         }
 
         function iniciarPainelRepresentante(rep) {
-            esconderTodasTelas();
-            document.getElementById('dashboardRepresentative').classList.remove('hidden');
-            document.getElementById('repWelcomeName').innerText = `Rep: ${rep.name}`;
+            mostrarTelaComAnimacao('dashboardRepresentative');
+            document.getElementById('repWelcomeName').innerText = `Rep: ${rep ? rep.name : 'Logado'}`;
             startRepListeners();
             renderRepDashboard();
         }
@@ -943,7 +1238,12 @@
             });
 
             document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).className = "flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
-            document.getElementById(`content${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+            
+            const targetContent = document.getElementById(`content${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
+            targetContent.classList.remove('hidden');
+            targetContent.classList.remove('screen-android-animate');
+            void targetContent.offsetWidth;
+            targetContent.classList.add('screen-android-animate');
 
             if (tab === 'dashboard') {
                 renderAdminDashboard();
@@ -984,7 +1284,7 @@
             }
 
             fecharModalEditarSenha();
-            showToast("Senha atualizada com sucesso!", "success");
+            showToast("Credenciais atualizadas com sucesso!", "success");
         };
 
         window.cadastrarAdmin = async () => {
@@ -1079,7 +1379,7 @@
                         </div>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="abrirModalEditarSenha('${adm.id}', 'admin', '${adm.name}', '${adm.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                        <button onclick="abrirModalEditarSenha('${adm.id}', 'admin', '${adm.name}', '${adm.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Gerenciar Conta">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
                         <button onclick="removerAdmin('${adm.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
@@ -1144,7 +1444,7 @@
                         </div>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="abrirModalEditarSenha('${driver.id}', 'driver', '${driver.name}', '${driver.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                        <button onclick="abrirModalEditarSenha('${driver.id}', 'driver', '${driver.name}', '${driver.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Gerenciar Conta">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
                         <button onclick="removerMotorista('${driver.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
@@ -1209,7 +1509,7 @@
                         </div>
                     </div>
                     <div class="flex gap-1">
-                        <button onclick="abrirModalEditarSenha('${rep.id}', 'rep', '${rep.name}', '${rep.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Alterar Senha">
+                        <button onclick="abrirModalEditarSenha('${rep.id}', 'rep', '${rep.name}', '${rep.pin}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition-all" title="Gerenciar Conta">
                             <i class="fa-solid fa-pencil"></i>
                         </button>
                         <button onclick="removerRepresentante('${rep.id}')" class="text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-all" title="Remover">
@@ -1437,6 +1737,10 @@
                     LocalDb.set('routes', routes);
                 }
 
+                if (rep) {
+                    enviarNotificacaoLocal("Nova Carga Atribuída!", `Carga ${cargoNumber || ''} atribuída ao motorista ${driver.name}.`);
+                }
+
                 document.getElementById('urlInput').value = '';
                 document.getElementById('cargoNumberInput').value = '';
                 document.getElementById('selectDriverForRoute').value = '';
@@ -1483,6 +1787,10 @@
                     routes[idx].repName = rep ? rep.name : null;
                     LocalDb.set('routes', routes);
                 }
+            }
+
+            if (rep) {
+                enviarNotificacaoLocal("Nova Carga Vinculada!", `Você foi vinculado para acompanhar uma carga.`);
             }
 
             window.fecharModalAssignRep();
@@ -1725,22 +2033,45 @@
         };
 
         function renderDriverDashboard() {
-            const myRoutes = allRoutes.filter(r => r.driverId === currentDriverId && r.status === 'active');
+            const currentDriver = allDrivers.find(d => d.id === currentDriverId);
+            const myRoutes = allRoutes.filter(r => r.driverId === currentDriverId);
+            const activeRoutes = myRoutes.filter(r => r.status === 'active');
+
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+
+            const monthlyRoutes = myRoutes.filter(r => {
+                const routeDate = new Date(r.finishedAt || r.createdAt);
+                return routeDate.getMonth() === currentMonth && routeDate.getFullYear() === currentYear;
+            });
+
+            document.getElementById('driverMonthlyCargosSummary').innerText = monthlyRoutes.length;
+
             const noRouteDiv = document.getElementById('driverNoRoute');
             const activeRouteDiv = document.getElementById('driverActiveRoute');
             const btnOpenMaps = document.getElementById('btnOpenMaps');
             
-            if (myRoutes.length === 0) {
+            if (activeRoutes.length === 0) {
                 noRouteDiv.classList.remove('hidden');
                 activeRouteDiv.classList.add('hidden');
                 btnOpenMaps.classList.add('hidden');
+                document.getElementById('driverDaysSummary').innerText = "0 dias";
+                document.getElementById('driverKmSummary').innerText = "-- km";
                 return;
             }
 
-            const activeRoute = myRoutes.sort((a,b) => b.createdAt - a.createdAt)[0];
+            const activeRoute = activeRoutes.sort((a,b) => b.createdAt - a.createdAt)[0];
             noRouteDiv.classList.add('hidden');
             activeRouteDiv.classList.remove('hidden');
             btnOpenMaps.classList.remove('hidden');
+
+            const startMs = activeRoute.startedAt || activeRoute.createdAt;
+            const diffDays = Math.max(1, Math.ceil((Date.now() - startMs) / (1000 * 60 * 60 * 24)));
+            document.getElementById('driverDaysSummary').innerText = `${diffDays} dia(s)`;
+
+            const totalStopsCount = activeRoute.stops ? activeRoute.stops.length : 0;
+            document.getElementById('driverKmSummary').innerText = totalStopsCount > 0 ? `~${totalStopsCount * 45} km` : "-- km";
 
             if (activeRoute.rawUrl && activeRoute.rawUrl.trim() !== '') {
                 let link = activeRoute.rawUrl.trim();
@@ -1973,7 +2304,9 @@
         window.toggleStopStatus = async (routeId, stopIndex, currentStatus) => {
             const route = allRoutes.find(r => r.id === routeId);
             if (!route) return;
-            
+
+            vibrarDispositivo([100, 30, 100]);
+
             const newStops = [...route.stops];
             newStops[stopIndex].concluido = !currentStatus;
 
@@ -1999,8 +2332,12 @@
                 }
             }
 
-            if(!currentStatus && typeof notificationSound.play === 'function'){
-                notificationSound.play().catch(e=>{});
+            if (!currentStatus) {
+                if (typeof notificationSound.play === 'function') {
+                    notificationSound.play().catch(e=>{});
+                }
+                const stopName = newStops[stopIndex].texto || 'Parada';
+                enviarNotificacaoLocal("Parada Concluída!", `${route.driverName} concluiu: ${stopName}`);
             }
         };
 
