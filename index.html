@@ -52,6 +52,12 @@
 </head>
 <body class="h-full text-slate-800 antialiased flex flex-col justify-between">
 
+    <!-- Indicador de Status do Firebase -->
+    <div id="firebaseStatusWidget" class="fixed bottom-3 left-4 z-50 flex items-center gap-2 bg-slate-900/90 text-white px-3 py-1.5 rounded-full shadow-xl border border-slate-700 text-[11px] font-semibold backdrop-blur-sm pointer-events-none">
+        <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
+        <span id="firebaseStatusText" class="text-slate-300">Conectando...</span>
+    </div>
+
     <!-- Container do PWA Alerta de Instalação -->
     <div id="pwaInstallBanner" class="hidden fixed top-0 left-0 right-0 bg-[#152e50] text-white px-4 py-3 z-50 shadow-xl flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -167,12 +173,10 @@
     <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200">
         <div class="w-full max-w-sm space-y-6 text-center">
             <div class="space-y-3">
-                <!-- Ícone Reformulado: Rota de Mapa em tom Azul #152e50 -->
-                <div class="w-22 h-22 w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
+                <div class="w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
                     <div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
                     <i class="fa-solid fa-map-location-dot text-3xl text-white relative z-10 drop-shadow"></i>
                 </div>
-                <!-- Título com tom #152e50 e fonte aumentada -->
                 <h1 class="text-3xl font-extrabold text-[#152e50] tracking-tight" style="font-family: 'Handel Gothic D', sans-serif; font-style: italic;">LOGÍSTICA FIBRASOL</h1>
                 <p class="text-xs text-slate-500 font-medium">Selecione seu perfil para acessar o sistema</p>
             </div>
@@ -601,23 +605,44 @@
         const appId = "pwa-logistica-v2";
 
         const firebaseConfig = {
-            apiKey: "",
-            authDomain: "",
-            projectId: "",
-            storageBucket: "",
-            messagingSenderId: "",
-            appId: ""
+            apiKey: "AIzaSyAUCNdX_mMJ2IiMrDGYpMF6qs1USC5KJ0k",
+            authDomain: "app-de-entregas-e5f57.firebaseapp.com",
+            projectId: "app-de-entregas-e5f57",
+            storageBucket: "app-de-entregas-e5f57.firebasestorage.app",
+            messagingSenderId: "995676671271",
+            appId: "1:995676671271:web:6a8a4e25cb0380993fed02",
+            measurementId: "G-SP7RC3KSL2"
         };
+
+        function atualizarStatusConexao(conectado) {
+            const dot = document.getElementById('firebaseStatusDot');
+            const text = document.getElementById('firebaseStatusText');
+
+            if (conectado) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
+                text.innerText = "Firebase Conectado";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
+                text.innerText = "Modo Offline (Local)";
+            }
+        }
 
         if (firebaseConfig.apiKey && firebaseConfig.projectId) {
             try {
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 useFirebase = true;
+                atualizarStatusConexao(true);
             } catch (e) {
                 console.warn("Erro ao inicializar Firebase. Usando LocalStorage Fallback.", e);
+                atualizarStatusConexao(false);
             }
+        } else {
+            atualizarStatusConexao(false);
         }
+
+        window.addEventListener('online', () => { if(useFirebase) atualizarStatusConexao(true); });
+        window.addEventListener('offline', () => { atualizarStatusConexao(false); });
 
         class LocalStorageManager {
             constructor() {
