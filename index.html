@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Logística Fibrasol v1.1.1</title>
 
-    <!-- Favicon SVG Nativo (Patch 1.1.1) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23152e50'/><path d='M112 176h176v160H112z' fill='none' stroke='%23ffffff' stroke-width='20' stroke-linejoin='round'/><path d='M288 224h80l32 48v64h-112z' fill='none' stroke='%23ffffff' stroke-width='20' stroke-linejoin='round'/><circle cx='176' cy='352' r='32' fill='none' stroke='%23ffffff' stroke-width='20'/><circle cx='336' cy='352' r='32' fill='none' stroke='%23ffffff' stroke-width='20'/><path d='M128 224h128M128 256h96' stroke='%23ffffff' stroke-width='16' stroke-linecap='round'/></svg>">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CONFIGURAÇÕES / MENU UNIFICADO (Patch 1.1.1) -->
+    <!-- MODAL DE CONFIGURAÇÕES -->
     <div id="modalConfig" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex sm:items-center sm:justify-center p-0 sm:p-4">
         <div class="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-2xl p-6 shadow-2xl space-y-5 screen-android-animate flex flex-col sm:block overflow-y-auto">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -332,7 +332,6 @@
 
     <!-- TELA INICIAL / MENU DE SELEÇÃO DE ACESSO -->
     <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200 relative pb-28 screen-android-animate">
-        <!-- Indicador visível de status web no rodapé esquerdo (Estilo escuro original restaurado) -->
         <div class="absolute bottom-4 left-4 z-40 hidden sm:flex items-center gap-2 bg-[#152e50] px-4 py-2.5 rounded-full shadow-lg border border-slate-800 text-xs font-medium text-white">
             <span id="webConnectionBadgeDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
             <span id="webConnectionBadgeText">Conectando...</span>
@@ -459,7 +458,6 @@
                     <div>
                         <div class="flex items-center gap-2">
                             <h2 class="font-bold text-sm">Painel do Administrador</h2>
-                            <!-- Status web visible no header admin (Patch 1.1.1) -->
                             <span id="adminHeaderStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 inline-block" title="Status de Conexão"></span>
                         </div>
                         <p class="text-[10px] text-slate-300">Gestão Geral de Rotas • v1.1.1</p>
@@ -585,7 +583,6 @@
                     </div>
                 </div>
 
-                <!-- Ranking de Cidades Mais Atendidas (Patch 1.1.1 Item 21) -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <div class="border-b border-slate-100 pb-3">
                         <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -692,7 +689,8 @@
 
     <!-- PAINEL MOTORISTA -->
     <div id="dashboardDriver" class="hidden min-h-full flex flex-col bg-slate-100 relative">
-        <header class="bg-emerald-600 text-white p-4 sticky top-0 z-30 shadow-md flex items-center justify-between">
+        <!-- CABEÇALHO FIXO PERMANENTEMENTE NO TOPO (SEM CONTAINER ANIMADO PARA NUNCA PERDER O POSITION FIXED) -->
+        <header class="bg-emerald-600 text-white p-4 fixed top-0 left-0 right-0 z-40 shadow-md flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm">
                     <i class="fa-solid fa-truck"></i>
@@ -708,7 +706,8 @@
             </button>
         </header>
 
-        <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-20 screen-android-animate">
+        <!-- CONTEÚDO COM PADDING SUPERIOR (pt-24) E ANIMAÇÃO APLICADA APENAS AQUI -->
+        <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-28 pt-24 screen-android-animate">
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-1 text-xs">
@@ -761,11 +760,6 @@
                 <div id="driverStopsList" class="space-y-2.5"></div>
             </div>
         </main>
-
-        <a id="btnOpenMaps" href="#" target="_blank" class="hidden fixed bottom-6 right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-3.5 rounded-full shadow-2xl flex items-center justify-center gap-2 transition-all transform hover:scale-105">
-            <i class="fa-solid fa-map-location-dot text-lg"></i>
-            <span class="text-xs uppercase tracking-wider">Abrir no Google Maps</span>
-        </a>
     </div>
 
     <!-- PAINEL REPRESENTANTE -->
@@ -838,7 +832,6 @@
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Carga</label>
                         <input type="text" id="searchRepCargoInput" placeholder="Nº da carga..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     </div>
-                    <!-- Autocompletar de Motoristas (Patch 1.1.1 Item 07) -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Motorista</label>
                         <div class="relative" id="repDriverAutocompleteContainer">
@@ -870,7 +863,6 @@
         </main>
     </div>
 
-    <!-- Firebase e Lógica JavaScript -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -1360,7 +1352,6 @@
             dropdown.classList.remove('hidden');
         });
 
-        // Autocompletar de Motoristas no Painel do Representante (Patch 1.1.1 Item 07)
         document.getElementById('searchRepDriverInput')?.addEventListener('input', (e) => {
             const val = e.target.value.toLowerCase().trim();
             const dropdown = document.getElementById('repDriverSuggestionsDropdown');
@@ -1806,7 +1797,6 @@
             });
             if (proximasElem) proximasElem.innerText = proximasConclusao;
 
-            // Coleta de cidades e ranking (Patch 1.1.1 Item 21)
             let cityCounts = {};
             let totalCidadesAtendidas = 0;
 
@@ -1829,7 +1819,6 @@
 
             if (citiesCountElem) citiesCountElem.innerText = totalCidadesAtendidas;
 
-            // Renderizar ranking de cidades
             if (citiesRankingListElem) {
                 citiesRankingListElem.innerHTML = '';
                 const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
@@ -2880,5 +2869,11 @@
             }, 3000);
         }
     </script>
+
+    <!-- BOTÃO GOOGLE MAPS FIXO NA RAIZ DA TELA -->
+    <a id="btnOpenMaps" href="#" target="_blank" class="hidden fixed bottom-6 right-6 z-50 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3.5 rounded-2xl shadow-2xl flex items-center justify-center gap-2 border border-emerald-500/50">
+        <i class="fa-solid fa-map-location-dot text-lg"></i>
+        <span class="text-xs uppercase tracking-wider font-bold">Abrir no Google Maps</span>
+    </a>
 </body>
 </html>
