@@ -3,20 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Logística Fibrasol PWA v1.0.3</title>
+    <title>Logística Fibrasol v1.1.1</title>
 
-    <!-- Tailwind CSS CDN -->
+    <!-- Favicon SVG Nativo (Patch 1.1.1) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%23152e50'/><path d='M112 176h176v160H112z' fill='none' stroke='%23ffffff' stroke-width='20' stroke-linejoin='round'/><path d='M288 224h80l32 48v64h-112z' fill='none' stroke='%23ffffff' stroke-width='20' stroke-linejoin='round'/><circle cx='176' cy='352' r='32' fill='none' stroke='%23ffffff' stroke-width='20'/><circle cx='336' cy='352' r='32' fill='none' stroke='%23ffffff' stroke-width='20'/><path d='M128 224h128M128 256h96' stroke='%23ffffff' stroke-width='16' stroke-linecap='round'/></svg>">
+
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
-    <!-- Configurações PWA e Mobile -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#152e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -56,33 +53,17 @@
             font-weight: 700;
             background-color: #f8fafc;
         }
-
-        /* Transições Fluídas Suaves Estilo Android Pure (v1.0.3) */
         @keyframes androidSlideUpPure {
-            from {
-                opacity: 0;
-                transform: translateY(18px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
         @keyframes androidFadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-            }
+            from { opacity: 1; }
+            to { opacity: 0; }
         }
-
         .screen-android-animate {
             animation: androidSlideUpPure 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-            will-change: transform, opacity;
         }
-
         .splash-fade-out {
             animation: androidFadeOut 0.4s ease-out forwards;
         }
@@ -90,11 +71,9 @@
 </head>
 <body class="h-full text-slate-800 antialiased flex flex-col justify-between relative">
 
-    <!-- SPLASH SCREEN DE ABERTURA (v1.0.3 - 2 segundos) -->
+    <!-- SPLASH SCREEN DE ABERTURA -->
     <div id="splashScreen" class="fixed inset-0 bg-[#152e50] z-50 flex flex-col items-center justify-between p-8 text-white select-none">
         <div></div>
-        
-        <!-- Logo Central / Branding -->
         <div class="flex flex-col items-center text-center space-y-4">
             <div class="w-24 h-24 rounded-3xl bg-white/10 flex items-center justify-center p-5 shadow-2xl border border-white/20 backdrop-blur-md">
                 <i class="fa-solid fa-map-location-dot text-4xl text-white"></i>
@@ -104,81 +83,127 @@
             </h1>
             <p class="text-xs text-slate-300 font-medium tracking-widest uppercase">Sistema de Rotas & Entregas</p>
         </div>
-
-        <!-- Rodapé do Splash -->
         <div class="flex items-center gap-2.5 text-xs text-slate-300 bg-white/10 px-4 py-2 rounded-full border border-white/15 backdrop-blur-sm">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="font-medium">Conectando ao Firebase...</span>
+            <span class="font-medium">Carregando versão 1.1.1...</span>
         </div>
     </div>
 
-    <!-- BOTÃO FLUTUANTE SUPERIOR COM ENGRENAGEM E BADGE DE NOTIFICAÇÃO -->
-    <div class="fixed top-4 right-4 z-40">
-        <button onclick="abrirModalPatchNotes()" class="relative bg-white/90 hover:bg-white text-[#152e50] w-10 h-10 rounded-full shadow-lg border border-slate-200 backdrop-blur-md flex items-center justify-center transition-all hover:scale-105 active:scale-95" title="Menu e Patch Notes">
-            <i class="fa-solid fa-gear text-lg"></i>
-            <span id="patchBadgeNotice" class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
-        </button>
-    </div>
-
-    <!-- MODAL DE PATCH NOTES E MENU DE ATUALIZAÇÕES DO APP -->
-    <div id="modalPatchNotes" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
-            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-lg bg-[#152e50] text-white flex items-center justify-center font-bold text-xs">
-                        <i class="fa-solid fa-code-branch"></i>
+    <!-- MODAL DE CONFIGURAÇÕES / MENU UNIFICADO (Patch 1.1.1) -->
+    <div id="modalConfig" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex sm:items-center sm:justify-center p-0 sm:p-4">
+        <div class="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-2xl p-6 shadow-2xl space-y-5 screen-android-animate flex flex-col sm:block overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center space-x-2 text-[#152e50]">
+                    <div class="w-8 h-8 rounded-lg bg-[#152e50] text-white flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-gear text-sm"></i>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm">Atualizações do App</h3>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase">Versão Atual: v1.0.3</p>
+                    <h3 class="font-bold text-slate-800">Opções do Sistema</h3>
+                </div>
+                <button onclick="fecharModalConfig()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar
+                </button>
+            </div>
+            
+            <div class="space-y-2 flex-1">
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between">
+                    <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+                        <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-slate-500"></span>
+                        <span id="firebaseStatusText">Status do Firebase</span>
                     </div>
                 </div>
-                <button onclick="fecharModalPatchNotes()" class="text-slate-400 hover:text-slate-600 p-2">
+
+                <button onclick="abrirModalTrocaSenhaPessoal()" class="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-key text-slate-500"></i>
+                        <span class="text-sm font-medium text-slate-700">Alterar Minha Senha</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                </button>
+
+                <button onclick="alternarPatchNotesBox()" class="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-file-code text-slate-500"></i>
+                        <span class="text-sm font-medium text-slate-700">Notas da Versão (v1.1.1)</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                </button>
+
+                <button onclick="forcarAtualizacaoPwa()" class="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-rotate text-blue-600"></i>
+                        <span class="text-sm font-medium text-blue-600">Forçar Atualização do App</span>
+                    </div>
+                    <i class="fa-solid fa-arrows-rotate text-xs text-blue-500"></i>
+                </button>
+            </div>
+
+            <div id="patchNotesBox" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs space-y-2 max-h-40 overflow-y-auto">
+                <p class="font-bold text-slate-700">Novidades da Versão 1.1.1:</p>
+                <ul class="list-disc pl-4 space-y-1 text-slate-600">
+                    <li><strong>Autocompletar de Motoristas:</strong> Campo de busca interativo no painel do representante.</li>
+                    <li><strong>Ranking de Cidades:</strong> Novo painel analítico com as cidades mais atendidas.</li>
+                    <li><strong>Estilização Avançada:</strong> Fontes e tamanhos aprimorados para selects e representantes.</li>
+                    <li><strong>Status Web Visível:</strong> Indicador de conexão restaurado no rodapé web principal.</li>
+                </ul>
+            </div>
+
+            <button onclick="fazerLogout()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-all flex items-center justify-center space-x-2 text-sm mt-auto sm:mt-0">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Sair / Desconectar Conta</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL DE TROCA DE SENHA PESSOAL -->
+    <div id="modalTrocaSenhaPessoal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm">Alterar Minha Senha</h3>
+                <button onclick="fecharModalTrocaSenhaPessoal()" class="text-slate-400 hover:text-slate-600 p-1">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-
-            <div class="space-y-3 max-h-[55vh] overflow-y-auto pr-1 text-xs">
-                <!-- Patch v1.0.3 -->
-                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1.5">
-                    <div class="flex items-center justify-between">
-                        <span class="font-extrabold text-[#152e50] text-xs">Patch v1.0.3</span>
-                        <span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">Versão Atual</span>
-                    </div>
-                    <ul class="list-disc list-inside space-y-1 text-slate-600 pl-1">
-                        <li><strong>Menu Flutuante:</strong> Engrenagem no topo com aba de novidades e atualização manual.</li>
-                        <li><strong>Persistência de Sessão:</strong> O app não desloga mais ao recarregar a página no Android.</li>
-                        <li><strong>Gestão de Contas:</strong> Opção de deslogar contas diretamente pelo Painel Admin.</li>
-                        <li><strong>Splash Screen:</strong> Duração de 2 segundos com indicador do Firebase.</li>
-                        <li><strong>Transições Suaves:</strong> Animações estilo Android de 0.5s sem solavancos no layout.</li>
-                    </ul>
+            <form onsubmit="salvarNovaSenhaPessoal(event)" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha Atual</label>
+                    <input type="password" id="pwdAtualPessoal" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm font-mono tracking-wider">
                 </div>
-
-                <!-- Patch v1.0.2 -->
-                <div class="bg-slate-50/50 p-3 rounded-xl border border-slate-200 space-y-1 opacity-75">
-                    <span class="font-bold text-slate-700 text-xs">Patch v1.0.2</span>
-                    <p class="text-slate-500">Adição do card/guia de instalação PWA e estatísticas do motorista no dashboard.</p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Nova Senha</label>
+                    <input type="password" id="pwdNovaPessoal" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm font-mono tracking-wider">
                 </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Confirmar Nova Senha</label>
+                    <input type="password" id="pwdConfirmaPessoal" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm font-mono tracking-wider">
+                </div>
+                <div class="flex space-x-3 pt-2">
+                    <button type="button" onclick="fecharModalTrocaSenhaPessoal()" class="flex-1 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 transition-colors">Cancelar</button>
+                    <button type="submit" class="flex-1 py-3 bg-[#152e50] text-white rounded-xl text-xs font-bold hover:bg-[#0f223d] transition-colors shadow-md">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE MÚLTIPLOS REPRESENTANTES -->
+    <div id="modalMultiReps" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-users text-purple-600"></i> Representantes Vinculados
+                </h3>
+                <button onclick="fecharModalMultiReps()" class="text-slate-400 hover:text-slate-600 p-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
             </div>
-
-            <div class="pt-2 space-y-2 border-t border-slate-100">
-                <button onclick="forcarAtualizacaoPwa()" class="w-full py-3 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-arrows-rotate"></i> Forçar Atualização do App
-                </button>
-                <button onclick="fecharModalPatchNotes()" class="w-full py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl text-xs hover:bg-slate-200">
-                    Fechar
-                </button>
+            <p class="text-xs text-slate-500">Lista de representantes associados a esta carga:</p>
+            <div id="modalMultiRepsList" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            <div class="pt-2 border-t border-slate-100 flex items-center justify-end">
+                <button onclick="fecharModalMultiReps()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs">Fechar</button>
             </div>
         </div>
     </div>
 
-    <!-- Indicador de Status do Firebase -->
-    <div id="firebaseStatusWidget" class="fixed bottom-3 left-4 z-40 flex items-center gap-2 bg-slate-900/90 text-white px-3 py-1.5 rounded-full shadow-xl border border-slate-700 text-[11px] font-semibold backdrop-blur-sm pointer-events-none">
-        <span id="firebaseStatusDot" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse"></span>
-        <span id="firebaseStatusText" class="text-slate-300">Conectando...</span>
-    </div>
-
-    <!-- Modal de Guia Passo a Passo para Instalação (Exclusivo Celular) -->
+    <!-- Modal de Guia Passo a Passo para Instalação -->
     <div id="pwaInstallGuideModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -189,7 +214,6 @@
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
-            
             <div class="space-y-4 text-xs text-slate-600">
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
                     <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5"><i class="fa-brands fa-android text-emerald-600"></i> No Android (Chrome):</p>
@@ -198,7 +222,6 @@
                         <li>Selecione <strong>"Adicionar à tela inicial"</strong> ou <strong>"Instalar aplicativo"</strong>.</li>
                     </ol>
                 </div>
-
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
                     <p class="font-bold text-slate-800 mb-1 flex items-center gap-1.5"><i class="fa-brands fa-apple text-slate-800"></i> No iPhone (Safari):</p>
                     <ol class="list-decimal list-inside space-y-1 pl-1">
@@ -207,7 +230,6 @@
                     </ol>
                 </div>
             </div>
-
             <button onclick="fecharGuiaInstalacaoPwa()" class="w-full py-3 bg-[#152e50] text-white font-bold rounded-xl text-xs uppercase tracking-wider">Entendi</button>
         </div>
     </div>
@@ -230,7 +252,7 @@
         </div>
     </div>
 
-    <!-- Modal Editar Senha / Deslogar -->
+    <!-- Modal Editar Senha -->
     <div id="modalEditPassword" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -257,25 +279,25 @@
         </div>
     </div>
 
-    <!-- Modal Enviar / Atribuir Representante -->
+    <!-- Modal Enviar / Atribuir Representantes -->
     <div id="modalAssignRep" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4 screen-android-animate">
             <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                 <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-                    <i class="fa-solid fa-briefcase text-purple-600"></i> Enviar para Representante
+                    <i class="fa-solid fa-briefcase text-purple-600"></i> Vincular Representantes à Carga
                 </h3>
                 <button onclick="fecharModalAssignRep()" class="text-slate-400 hover:text-slate-600 p-2">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Selecione o Representante</label>
-                <select id="selectRepModalInput" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 outline-none text-xs bg-white"></select>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-2">Selecione os Representantes (Múltipla escolha)</label>
+                <div id="checkboxRepsContainer" class="space-y-2 max-h-48 overflow-y-auto p-2 border border-slate-200 rounded-xl bg-slate-50"></div>
             </div>
             <input type="hidden" id="targetRouteIdForRep">
             <div class="flex items-center gap-3 pt-2">
                 <button onclick="fecharModalAssignRep()" class="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 font-semibold text-xs hover:bg-slate-50">Cancelar</button>
-                <button onclick="salvarRepresentanteRota()" class="flex-1 py-3 rounded-xl bg-purple-600 text-white font-semibold text-xs hover:bg-purple-700 shadow-md shadow-purple-200">Salvar e Enviar</button>
+                <button onclick="salvarRepresentantesRota()" class="flex-1 py-3 rounded-xl bg-purple-600 text-white font-semibold text-xs hover:bg-purple-700 shadow-md shadow-purple-200">Salvar e Enviar</button>
             </div>
         </div>
     </div>
@@ -308,8 +330,21 @@
         </div>
     </div>
 
-    <!-- TELA INITIAL / MENU DE SELEÇÃO DE ACESSO -->
+    <!-- TELA INICIAL / MENU DE SELEÇÃO DE ACESSO -->
     <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200 relative pb-28 screen-android-animate">
+        <!-- Indicador visível de status web no rodapé esquerdo (Estilo escuro original restaurado) -->
+        <div class="absolute bottom-4 left-4 z-40 hidden sm:flex items-center gap-2 bg-[#152e50] px-4 py-2.5 rounded-full shadow-lg border border-slate-800 text-xs font-medium text-white">
+            <span id="webConnectionBadgeDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+            <span id="webConnectionBadgeText">Conectando...</span>
+        </div>
+
+        <div class="absolute top-4 right-4 z-40">
+            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white shadow hover:bg-slate-50 transition-colors text-[#152e50] border border-slate-200 flex items-center justify-center">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="patch-badge-notice absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+            </button>
+        </div>
+
         <div class="w-full max-w-sm space-y-6 text-center">
             <div class="space-y-3">
                 <div class="w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
@@ -351,10 +386,9 @@
                     </div>
                 </button>
             </div>
-            <p class="text-[11px] text-slate-400">gbsj17 v1.0.3 • Sincronização em Tempo Real</p>
+            <p class="text-[11px] text-slate-400">gbsj17 v1.1.1 • Sincronização em Tempo Real</p>
         </div>
 
-        <!-- Card Fixo de Instalação (Exclusivo para Celulares / Telas Menores) -->
         <div id="mobileInstallCard" class="block md:hidden fixed bottom-4 left-4 right-4 z-30 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-slate-200/80">
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
@@ -385,7 +419,6 @@
                 <p id="loginSubtitle" class="text-xs text-slate-500">Insira suas credenciais para continuar</p>
             </div>
 
-            <!-- Formulário Admin -->
             <form id="formLoginAdmin" onsubmit="realizarLoginAdmin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário Admin</label>
@@ -398,11 +431,13 @@
                 <button type="submit" class="w-full py-3.5 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl shadow-md transition-all text-sm">Entrar como Admin</button>
             </form>
 
-            <!-- Formulário Pin -->
             <form id="formLoginPin" onsubmit="realizarLoginPin(event)" class="space-y-4 hidden">
                 <div>
                     <label id="loginNameLabel" class="block text-xs font-bold text-slate-700 uppercase mb-1">Seu Nome</label>
-                    <input type="text" id="loginNameInput" required placeholder="Digite seu nome" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm">
+                    <div class="relative" id="driverAutocompleteContainer">
+                        <input type="text" id="loginNameInput" required placeholder="Digite seu nome" autocomplete="off" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm bg-white">
+                        <div id="driverSuggestionsDropdown" class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto"></div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Senha</label>
@@ -422,14 +457,20 @@
                         <i class="fa-solid fa-user-gear text-white"></i>
                     </div>
                     <div>
-                        <h2 class="font-bold text-sm">Painel do Administrador</h2>
-                        <p class="text-[10px] text-slate-300">Gestão Geral de Rotas • v1.0.3</p>
+                        <div class="flex items-center gap-2">
+                            <h2 class="font-bold text-sm">Painel do Administrador</h2>
+                            <!-- Status web visible no header admin (Patch 1.1.1) -->
+                            <span id="adminHeaderStatusDot" class="w-2 h-2 rounded-full bg-emerald-400 inline-block" title="Status de Conexão"></span>
+                        </div>
+                        <p class="text-[10px] text-slate-300">Gestão Geral de Rotas • v1.1.1</p>
                     </div>
                 </div>
-                <button onclick="fazerLogout()" class="text-xs bg-[#0f223d] hover:bg-[#0a182b] text-slate-200 px-3.5 py-2 rounded-lg border border-slate-700">Sair</button>
+                <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white hover:bg-slate-50 transition-colors text-[#152e50] border border-slate-200 flex items-center justify-center shadow-sm">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                    <span class="patch-badge-notice absolute -top-1 -right-1 w-3 h-3 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+                </button>
             </header>
 
-            <!-- Abas do Admin -->
             <div class="bg-white border-b border-slate-200 flex text-xs font-semibold text-slate-500 overflow-x-auto hide-scrollbar whitespace-nowrap">
                 <button id="tabRotas" onclick="alternarAbaAdmin('rotas')" class="flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all">
                     <i class="fa-solid fa-route"></i> Rotas
@@ -450,12 +491,10 @@
         </div>
 
         <main class="p-4 space-y-6 flex-1 max-w-4xl mx-auto w-full screen-android-animate">
-            <!-- ABA ROTAS -->
             <div id="contentRotas" class="space-y-6">
-                <!-- CARD 01: Iniciar uma Nova Rota -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                        <i class="fa-solid fa-plus-circle text-[#152e50]"></i> Card 01 - Iniciar uma Nova Rota
+                        <i class="fa-solid fa-plus-circle text-[#152e50]"></i> Iniciar uma Nova Rota
                     </h3>
                     <div class="space-y-3">
                         <div>
@@ -469,11 +508,11 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Atribuir Motorista *</label>
-                                <select id="selectDriverForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs bg-white"></select>
+                                <select id="selectDriverForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm bg-white font-medium text-slate-800"></select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Atribuir Representante</label>
-                                <select id="selectRepForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-xs bg-white"></select>
+                                <select id="selectRepForRoute" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm bg-white font-medium text-slate-800"></select>
                             </div>
                         </div>
                         <button onclick="gerarEAtribuirRota()" class="w-full py-3.5 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl shadow-md transition-all text-xs uppercase tracking-wider flex items-center justify-center gap-2">
@@ -482,12 +521,11 @@
                     </div>
                 </div>
 
-                <!-- CARD 02: Rotas Ativas -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                         <div>
                             <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                                <i class="fa-solid fa-truck-fast text-[#152e50]"></i> Card 02 - Rotas Ativas em Andamento
+                                <i class="fa-solid fa-truck-fast text-[#152e50]"></i> Rotas Ativas em Andamento
                             </h3>
                             <p id="adminActiveCountSummary" class="text-xs text-slate-500 mt-0.5">Calculando cargas ativas...</p>
                         </div>
@@ -496,23 +534,26 @@
                     <div id="adminRoutesList" class="space-y-3"></div>
                 </div>
 
-                <!-- CARD 03: Rotas Finalizadas -->
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
                         <div>
                             <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                                <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Card 03 - Rotas Finalizadas por Mês
+                                <i class="fa-solid fa-clipboard-check text-emerald-600"></i> Rotas Finalizadas por Mês
                             </h3>
                             <p class="text-xs text-slate-500 mt-0.5">Histórico consolidado de cargas entregues</p>
                         </div>
-                        <input type="text" id="searchArchivedRoutesInput" oninput="renderAdminArchivedRoutesList()" placeholder="Buscar finalizadas..." class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#152e50] w-full sm:w-auto">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <input type="text" id="searchArchivedRoutesInput" oninput="renderAdminArchivedRoutesList()" placeholder="Buscar finalizadas..." class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#152e50]">
+                            <button onclick="apagarCargasSelecionadasAdmin()" class="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                                <i class="fa-solid fa-trash-can"></i> Apagar Selecionadas
+                            </button>
+                        </div>
                     </div>
                     <div id="adminArchivedSummary" class="grid grid-cols-1 sm:grid-cols-3 gap-3"></div>
                     <div id="adminArchivedRoutesList" class="space-y-3 pt-2"></div>
                 </div>
             </div>
 
-            <!-- ABA DASHBOARD -->
             <div id="contentDashboard" class="hidden space-y-6">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
@@ -526,16 +567,16 @@
                     </div>
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cargas Finalizadas</p>
-                            <p id="dashArchivedCount" class="text-2xl font-extrabold text-emerald-600 mt-1">0</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Próximas da Conclusão</p>
+                            <p id="dashProximasConclusaoCount" class="text-2xl font-extrabold text-amber-600 mt-1">0</p>
                         </div>
-                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl">
-                            <i class="fa-solid fa-clipboard-check"></i>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl">
+                            <i class="fa-solid fa-hourglass-half"></i>
                         </div>
                     </div>
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cidades Atendidas</p>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Cidades Mais Atendidas</p>
                             <p id="dashCitiesCount" class="text-2xl font-extrabold text-purple-600 mt-1">0</p>
                         </div>
                         <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
@@ -544,7 +585,17 @@
                     </div>
                 </div>
 
-                <!-- Desempenho de Motoristas no Mês Atual -->
+                <!-- Ranking de Cidades Mais Atendidas (Patch 1.1.1 Item 21) -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="border-b border-slate-100 pb-3">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-ranking-star text-purple-600"></i> Ranking de Cidades com Maior Demanda
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Frequência de aparição nas paradas das rotas</p>
+                    </div>
+                    <div id="dashCitiesRankingList" class="space-y-2.5"></div>
+                </div>
+
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <div class="border-b border-slate-100 pb-3">
                         <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -556,7 +607,6 @@
                 </div>
             </div>
 
-            <!-- ABA MOTORISTAS -->
             <div id="contentMotoristas" class="hidden space-y-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -584,7 +634,6 @@
                 </div>
             </div>
 
-            <!-- ABA REPRESENTANTES -->
             <div id="contentRepresentantes" class="hidden space-y-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -612,7 +661,6 @@
                 </div>
             </div>
 
-            <!-- ABA ADMINS -->
             <div id="contentAdmins" class="hidden space-y-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
                     <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
@@ -651,14 +699,16 @@
                 </div>
                 <div>
                     <h2 id="driverWelcomeName" class="font-bold text-sm">Motorista</h2>
-                    <p class="text-[10px] text-emerald-200">Painel de Entregas • v1.0.3</p>
+                    <p class="text-[10px] text-emerald-200">Painel de Entregas • v1.1.1</p>
                 </div>
             </div>
-            <button onclick="fazerLogout()" class="text-xs bg-emerald-700 hover:bg-emerald-800 text-white px-3.5 py-2 rounded-lg border border-emerald-500">Sair</button>
+            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white hover:bg-slate-50 transition-colors text-emerald-600 border border-emerald-500 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="patch-badge-notice absolute -top-1 -right-1 w-3 h-3 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+            </button>
         </header>
 
         <main class="p-4 space-y-4 flex-1 max-w-lg mx-auto w-full pb-20 screen-android-animate">
-            <!-- DASHBOARD/RESUMO DO MOTORISTA -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-1 text-xs">
@@ -727,22 +777,74 @@
                 </div>
                 <div>
                     <h2 id="repWelcomeName" class="font-bold text-sm">Representante</h2>
-                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas • v1.0.3</p>
+                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas • v1.1.1</p>
                 </div>
             </div>
-            <button onclick="fazerLogout()" class="text-xs bg-purple-800 hover:bg-purple-900 text-white px-3.5 py-2 rounded-lg border border-purple-600">Sair</button>
+            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white hover:bg-slate-50 transition-colors text-purple-700 border border-purple-600 flex items-center justify-center shadow-sm">
+                <i class="fa-solid fa-gear text-lg"></i>
+                <span class="patch-badge-notice absolute -top-1 -right-1 w-3 h-3 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+            </button>
         </header>
 
         <main class="p-4 space-y-4 flex-1 max-w-xl mx-auto w-full screen-android-animate">
+            <div class="grid grid-cols-3 gap-2">
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-boxes-packing"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Ativas</p>
+                    <p id="repMetricActive" class="text-xs font-extrabold text-slate-800 mt-0.5">0</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Cidades</p>
+                    <p id="repMetricCities" class="text-xs font-extrabold text-slate-800 mt-0.5">0</p>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
+                    <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-1 text-xs">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Conclusão</p>
+                    <p id="repMetricRate" class="text-xs font-extrabold text-slate-800 mt-0.5">0%</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Em Andamento</p>
+                        <p id="repStatusAndamento" class="text-lg font-extrabold text-purple-700 mt-0.5">0</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+                        <i class="fa-solid fa-truck-fast text-sm"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Próx. Conclusão</p>
+                        <p id="repStatusProximas" class="text-lg font-extrabold text-amber-600 mt-0.5">0</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="fa-solid fa-hourglass-half text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Carga</label>
                         <input type="text" id="searchRepCargoInput" placeholder="Nº da carga..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
                     </div>
+                    <!-- Autocompletar de Motoristas (Patch 1.1.1 Item 07) -->
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Motorista</label>
-                        <select id="searchRepDriverInput" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"></select>
+                        <div class="relative" id="repDriverAutocompleteContainer">
+                            <input type="text" id="searchRepDriverInput" placeholder="Nome do motorista..." autocomplete="off" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <div id="repDriverSuggestionsDropdown" class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto"></div>
+                        </div>
                     </div>
                 </div>
                 <button onclick="pesquisarCargaRepresentante()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center gap-2">
@@ -782,7 +884,7 @@
         let db = null;
         let useFirebase = false;
         const appId = "pwa-logistica-v2";
-        const CURRENT_VERSION = "v1.0.3";
+        const CURRENT_VERSION = "v1.1.1";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAUCNdX_mMJ2IiMrDGYpMF6qs1USC5KJ0k",
@@ -832,13 +934,34 @@
         function atualizarStatusConexao(conectado) {
             const dot = document.getElementById('firebaseStatusDot');
             const text = document.getElementById('firebaseStatusText');
+            const webDot = document.getElementById('webConnectionBadgeDot');
+            const webText = document.getElementById('webConnectionBadgeText');
+            const adminDot = document.getElementById('adminHeaderStatusDot');
 
-            if (conectado) {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
-                text.innerText = "Firebase Conectado";
-            } else {
-                dot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
-                text.innerText = "Modo Offline (Local)";
+            if (dot && text) {
+                if (conectado) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
+                    text.innerText = "Firebase Conectado";
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
+                    text.innerText = "Modo Offline (Local)";
+                }
+            }
+            if (webDot && webText) {
+                if (conectado) {
+                    webDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]";
+                    webText.innerText = "Firebase Conectado";
+                } else {
+                    webDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
+                    webText.innerText = "Modo Offline (Local)";
+                }
+            }
+            if (adminDot) {
+                if (conectado) {
+                    adminDot.className = "w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]";
+                } else {
+                    adminDot.className = "w-2 h-2 rounded-full bg-slate-400 inline-block";
+                }
             }
         }
 
@@ -926,15 +1049,50 @@
             document.getElementById('pwaInstallGuideModal')?.classList.add('hidden');
         };
 
-        window.abrirModalPatchNotes = () => {
-            document.getElementById('modalPatchNotes')?.classList.remove('hidden');
+        window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
+        window.addEventListener('popstate', (event) => {
+            const modalsAbertos = [
+                'modalConfig', 'modalTrocaSenhaPessoal', 'modalMultiReps', 
+                'pwaInstallGuideModal', 'confirmModal', 'modalEditPassword', 
+                'modalAssignRep', 'modalViewRoute'
+            ];
+            let fechouAlgum = false;
+            modalsAbertos.forEach(modalId => {
+                const el = document.getElementById(modalId);
+                if (el && !el.classList.contains('hidden')) {
+                    el.classList.add('hidden');
+                    fechouAlgum = true;
+                }
+            });
+
+            if (fechouAlgum) {
+                window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
+                return;
+            }
+
+            if (currentUserRole || selectedRoleForLogin) {
+                currentUserRole = null;
+                selectedRoleForLogin = null;
+                mostrarTelaComAnimacao('screenRoleSelection');
+                window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
+            } else {
+                window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
+            }
+        });
+
+        window.abrirModalConfig = () => {
+            document.getElementById('modalConfig')?.classList.remove('hidden');
             localStorage.setItem('app_last_read_version', CURRENT_VERSION);
-            const badge = document.getElementById('patchBadgeNotice');
-            if (badge) badge.classList.add('hidden');
+            document.querySelectorAll('.patch-badge-notice').forEach(b => b.classList.add('hidden'));
         };
 
-        window.fecharModalPatchNotes = () => {
-            document.getElementById('modalPatchNotes')?.classList.add('hidden');
+        window.fecharModalConfig = () => {
+            document.getElementById('modalConfig')?.classList.add('hidden');
+            document.getElementById('patchNotesBox')?.classList.add('hidden');
+        };
+
+        window.alternarPatchNotesBox = () => {
+            document.getElementById('patchNotesBox')?.classList.toggle('hidden');
         };
 
         window.forcarAtualizacaoPwa = () => {
@@ -950,17 +1108,79 @@
             }
         };
 
-        // LÓGICA DO SPLASH SCREEN (2 Segundos cravados)
+        window.abrirModalTrocaSenhaPessoal = () => {
+            if (!currentUserRole) {
+                return showToast("Você precisa estar logado para alterar sua senha.", "error");
+            }
+            fecharModalConfig();
+            document.getElementById('modalTrocaSenhaPessoal').classList.remove('hidden');
+        };
+
+        window.fecharModalTrocaSenhaPessoal = () => {
+            document.getElementById('modalTrocaSenhaPessoal').classList.add('hidden');
+            document.getElementById('pwdAtualPessoal').value = '';
+            document.getElementById('pwdNovaPessoal').value = '';
+            document.getElementById('pwdConfirmaPessoal').value = '';
+        };
+
+        window.salvarNovaSenhaPessoal = async (e) => {
+            e.preventDefault();
+            const atual = document.getElementById('pwdAtualPessoal').value.trim();
+            const nova = document.getElementById('pwdNovaPessoal').value.trim();
+            const confirma = document.getElementById('pwdConfirmaPessoal').value.trim();
+
+            if (nova !== confirma) return showToast("A nova senha e a confirmação não coincidem.", "error");
+            
+            let collectionName, userObj;
+            if (currentUserRole === 'admin') {
+                const legacyUser = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+                userObj = allAdmins.find(a => (a.pin || '').toString() === atual);
+                if (!userObj && atual === legacyUser.password) {
+                    legacyUser.password = nova;
+                    localStorage.setItem('app_admin_settings', JSON.stringify(legacyUser));
+                    fecharModalTrocaSenhaPessoal();
+                    return showToast("Senha do Administrador Padrão alterada com sucesso!", "success");
+                }
+                collectionName = 'admins';
+            } else if (currentUserRole === 'driver') {
+                userObj = allDrivers.find(d => d.id === currentDriverId);
+                collectionName = 'drivers';
+            } else if (currentUserRole === 'representative') {
+                userObj = allReps.find(r => r.id === currentRepId);
+                collectionName = 'representatives';
+            }
+
+            if (!userObj || (userObj.pin || '').toString() !== atual) {
+                return showToast("A senha atual informada está incorreta.", "error");
+            }
+
+            if (useFirebase) {
+                try {
+                    await updateDoc(doc(db, `artifacts/${appId}/public/data/${collectionName}`, userObj.id), { pin: nova });
+                } catch(err) {
+                    return showToast("Erro ao salvar no banco: " + err.message, "error");
+                }
+            } else {
+                const list = LocalDb.get(collectionName);
+                const idx = list.findIndex(item => item.id === userObj.id);
+                if (idx !== -1) {
+                    list[idx].pin = nova;
+                    LocalDb.set(collectionName, list);
+                }
+            }
+
+            fecharModalTrocaSenhaPessoal();
+            showToast("Senha alterada com sucesso!", "success");
+        };
+
         window.addEventListener('DOMContentLoaded', async () => {
             solicitarPermissaoNotificacoes();
             await inicializarContaAdminPadrao();
             await inicializarContaJrPadrao();
 
-            // Verificação de Badge de Leitura de Versão
             const lastRead = localStorage.getItem('app_last_read_version');
-            const badge = document.getElementById('patchBadgeNotice');
-            if (lastRead === CURRENT_VERSION && badge) {
-                badge.classList.add('hidden');
+            if (lastRead === CURRENT_VERSION) {
+                document.querySelectorAll('.patch-badge-notice').forEach(b => b.classList.add('hidden'));
             }
 
             setTimeout(() => {
@@ -1108,6 +1328,71 @@
             }
         };
 
+        document.getElementById('loginNameInput')?.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            const dropdown = document.getElementById('driverSuggestionsDropdown');
+            if (!dropdown) return;
+
+            if (!val || selectedRoleForLogin !== 'driver') {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            const matches = allDrivers.filter(d => d.name.toLowerCase().includes(val));
+            if (matches.length === 0) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            matches.forEach(m => {
+                const item = document.createElement('div');
+                item.className = "px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 cursor-pointer border-b border-slate-100 last:border-none";
+                item.innerText = m.name;
+                item.onclick = () => {
+                    document.getElementById('loginNameInput').value = m.name;
+                    dropdown.classList.add('hidden');
+                };
+                dropdown.appendChild(item);
+            });
+            dropdown.classList.remove('hidden');
+        });
+
+        // Autocompletar de Motoristas no Painel do Representante (Patch 1.1.1 Item 07)
+        document.getElementById('searchRepDriverInput')?.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase().trim();
+            const dropdown = document.getElementById('repDriverSuggestionsDropdown');
+            if (!dropdown) return;
+
+            if (!val) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            const matches = allDrivers.filter(d => d.name.toLowerCase().includes(val));
+            if (matches.length === 0) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            dropdown.innerHTML = '';
+            matches.forEach(m => {
+                const item = document.createElement('div');
+                item.className = "px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-800 cursor-pointer border-b border-slate-100 last:border-none";
+                item.innerText = m.name;
+                item.onclick = () => {
+                    document.getElementById('searchRepDriverInput').value = m.name;
+                    dropdown.classList.add('hidden');
+                };
+                dropdown.appendChild(item);
+            });
+            dropdown.classList.remove('hidden');
+        });
+
         function salvarSessao() {
             localStorage.setItem('app_session', JSON.stringify({
                 role: currentUserRole,
@@ -1116,7 +1401,6 @@
             }));
         }
 
-        // PERMANÊNCIA CONTINUA DA SESSÃO (Não desloga ao recarregar a página)
         function verificarSessaoSalva() {
             const session = JSON.parse(localStorage.getItem('app_session') || "null");
             if (!session) {
@@ -1185,6 +1469,7 @@
         }
 
         window.fazerLogout = () => {
+            fecharModalConfig();
             localStorage.removeItem('app_session');
             currentUserRole = null;
             currentDriverId = null;
@@ -1207,6 +1492,7 @@
             renderAdminRoutesList();
             renderAdminArchivedRoutesList();
             renderAdminDashboard();
+            alternarAbaAdmin('rotas');
         }
 
         function iniciarPainelMotorista(driver) {
@@ -1254,7 +1540,7 @@
             document.getElementById('editUserId').value = id;
             document.getElementById('editUserType').value = type;
             let labelType = type === 'admin' ? 'Administrador' : type === 'rep' ? 'Representante' : 'Motorista';
-            document.getElementById('editUserDisplay').innerHTML = `<i class="fa-solid fa-user mr-1"></i> ${labelType}: <strong>${name}</strong>`;
+            document.getElementById('editUserDisplay').innerHTML = `<i class="fa-solid fa-user mr-1"></i> ${labelType}: <strong class="text-sm font-bold">${name}</strong>`;
             document.getElementById('newPasswordInput').value = currentPin;
             document.getElementById('modalEditPassword').classList.remove('hidden');
         };
@@ -1374,7 +1660,7 @@
                             <i class="fa-solid fa-user-shield"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-slate-800">${adm.name}</p>
+                            <p class="font-bold text-slate-800 text-sm">${adm.name}</p>
                             <p class="text-xs text-slate-500">Senha: <strong class="text-slate-800 font-mono tracking-wider">${adm.pin}</strong></p>
                         </div>
                     </div>
@@ -1394,7 +1680,6 @@
         window.renderAdminDriversList = () => {
             const list = document.getElementById('adminDriversList');
             const select = document.getElementById('selectDriverForRoute');
-            const searchRepDriver = document.getElementById('searchRepDriverInput');
             const searchTerm = (document.getElementById('searchDriversInput')?.value || '').toLowerCase().trim();
             
             if (select) {
@@ -1406,18 +1691,6 @@
                     opt.textContent = d.name;
                     if (d.name === currentVal) opt.selected = true;
                     select.appendChild(opt);
-                });
-            }
-
-            if (searchRepDriver) {
-                const currentVal = searchRepDriver.value;
-                searchRepDriver.innerHTML = '<option value="">Todos os Motoristas...</option>';
-                allDrivers.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.name;
-                    opt.textContent = d.name;
-                    if (d.name === currentVal) opt.selected = true;
-                    searchRepDriver.appendChild(opt);
                 });
             }
 
@@ -1439,7 +1712,7 @@
                             <i class="fa-solid fa-truck"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-slate-800">${driver.name}</p>
+                            <p class="font-bold text-slate-800 text-sm">${driver.name}</p>
                             <p class="text-xs text-slate-500">Senha / PIN: <strong class="text-emerald-600 font-mono tracking-wider">${driver.pin}</strong></p>
                         </div>
                     </div>
@@ -1459,7 +1732,6 @@
         window.renderAdminRepsList = () => {
             const list = document.getElementById('adminRepsList');
             const selectRoute = document.getElementById('selectRepForRoute');
-            const selectModal = document.getElementById('selectRepModalInput');
             const searchTerm = (document.getElementById('searchRepsInput')?.value || '').toLowerCase().trim();
 
             if (selectRoute) {
@@ -1471,18 +1743,6 @@
                     opt.textContent = r.name;
                     if (r.name === currentVal) opt.selected = true;
                     selectRoute.appendChild(opt);
-                });
-            }
-
-            if (selectModal) {
-                const currentVal = selectModal.value;
-                selectModal.innerHTML = '<option value="">Nenhum Representante</option>';
-                allReps.forEach(r => {
-                    const opt = document.createElement('option');
-                    opt.value = r.name;
-                    opt.textContent = r.name;
-                    if (r.name === currentVal) opt.selected = true;
-                    selectModal.appendChild(opt);
                 });
             }
 
@@ -1504,7 +1764,7 @@
                             <i class="fa-solid fa-briefcase"></i>
                         </div>
                         <div>
-                            <p class="font-bold text-slate-800">${rep.name}</p>
+                            <p class="font-bold text-slate-800 text-sm">${rep.name}</p>
                             <p class="text-xs text-slate-500">Senha / PIN: <strong class="text-purple-600 font-mono tracking-wider">${rep.pin}</strong></p>
                         </div>
                     </div>
@@ -1523,26 +1783,78 @@
 
         window.renderAdminDashboard = () => {
             const activeCountElem = document.getElementById('dashActiveCount');
-            const archivedCountElem = document.getElementById('dashArchivedCount');
+            const proximasElem = document.getElementById('dashProximasConclusaoCount');
             const citiesCountElem = document.getElementById('dashCitiesCount');
             const driversMonthlyListElem = document.getElementById('dashDriversMonthlyList');
+            const citiesRankingListElem = document.getElementById('dashCitiesRankingList');
 
             if (!activeCountElem) return;
 
             const activeRoutes = allRoutes.filter(r => r.status === 'active');
-            const archivedRoutes = allRoutes.filter(r => r.status === 'archived');
-
             activeCountElem.innerText = activeRoutes.length;
-            archivedCountElem.innerText = archivedRoutes.length;
 
-            let totalCidadesAtendidas = 0;
-            allRoutes.forEach(r => {
+            let proximasConclusao = 0;
+            activeRoutes.forEach(r => {
                 if (r.stops && r.stops.length > 2) {
                     const entregas = r.stops.slice(1, -1);
-                    totalCidadesAtendidas += entregas.filter(s => s.concluido).length;
+                    const concluidas = entregas.filter(s => s.concluido).length;
+                    const pct = entregas.length > 0 ? (concluidas / entregas.length) : 0;
+                    if (pct >= 0.7 && concluidas < entregas.length) {
+                        proximasConclusao++;
+                    }
                 }
             });
-            citiesCountElem.innerText = totalCidadesAtendidas;
+            if (proximasElem) proximasElem.innerText = proximasConclusao;
+
+            // Coleta de cidades e ranking (Patch 1.1.1 Item 21)
+            let cityCounts = {};
+            let totalCidadesAtendidas = 0;
+
+            allRoutes.forEach(r => {
+                if (r.stops && r.stops.length > 0) {
+                    r.stops.forEach((stop, sIdx) => {
+                        let cityName = (stop.texto || stop.textoOriginal || '').trim();
+                        if (cityName) {
+                            cityName = cityName.replace(/ - (Iniciar|Finalizar) Rota/gi, '').trim();
+                            if (cityName) {
+                                cityCounts[cityName] = (cityCounts[cityName] || 0) + 1;
+                                if (sIdx > 0 && sIdx < r.stops.length - 1 && stop.concluido) {
+                                    totalCidadesAtendidas++;
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+
+            if (citiesCountElem) citiesCountElem.innerText = totalCidadesAtendidas;
+
+            // Renderizar ranking de cidades
+            if (citiesRankingListElem) {
+                citiesRankingListElem.innerHTML = '';
+                const sortedCities = Object.entries(cityCounts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+                if (sortedCities.length === 0) {
+                    citiesRankingListElem.innerHTML = `<p class="text-xs text-slate-500 italic">Nenhuma cidade registrada nas rotas ainda.</p>`;
+                } else {
+                    const maxCount = sortedCities[0][1] || 1;
+                    sortedCities.forEach(([cityName, count], index) => {
+                        const pctBar = Math.round((count / maxCount) * 100);
+                        const row = document.createElement('div');
+                        row.className = "space-y-1";
+                        row.innerHTML = `
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-slate-700"><strong class="text-purple-700">${index + 1}º</strong> ${cityName}</span>
+                                <span class="text-purple-600 font-bold">${count} ocorrência(s)</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5">
+                                <div class="bg-purple-600 h-1.5 rounded-full transition-all duration-500" style="width: ${pctBar}%"></div>
+                            </div>
+                        `;
+                        citiesRankingListElem.appendChild(row);
+                    });
+                }
+            }
 
             const now = new Date();
             const currentMonth = now.getMonth();
@@ -1715,11 +2027,13 @@
                 });
 
                 const nowTime = Date.now();
+                const repArray = rep ? [{ id: rep.id, name: rep.name }] : [];
                 const routeData = {
                     driverId: driver.id,
                     driverName: driver.name,
                     repId: rep ? rep.id : null,
                     repName: rep ? rep.name : null,
+                    representantes: repArray,
                     numeroCarga: cargoNumber,
                     stops: stops,
                     rawUrl: rawInput,
@@ -1756,10 +2070,26 @@
         };
 
         window.abrirModalEnviarRep = (routeId) => {
-            const selectModal = document.getElementById('selectRepModalInput');
+            const container = document.getElementById('checkboxRepsContainer');
             const route = allRoutes.find(r => r.id === routeId);
-            if (selectModal) {
-                selectModal.value = (route && route.repName) ? route.repName : '';
+            const currentReps = route?.representantes || (route?.repName ? [{id: route.repId, name: route.repName}] : []);
+
+            if (container) {
+                container.innerHTML = '';
+                if (allReps.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-500 italic">Nenhum representante cadastrado.</p>`;
+                } else {
+                    allReps.forEach(r => {
+                        const isChecked = currentReps.some(cr => cr.name.toLowerCase() === r.name.toLowerCase());
+                        const label = document.createElement('label');
+                        label.className = "flex items-center gap-2.5 p-2 rounded-lg hover:bg-white cursor-pointer transition-colors";
+                        label.innerHTML = `
+                            <input type="checkbox" value="${r.name}" data-id="${r.id}" ${isChecked ? 'checked' : ''} class="rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4">
+                            <span class="text-xs font-bold text-slate-800">${r.name}</span>
+                        `;
+                        container.appendChild(label);
+                    });
+                }
             }
             document.getElementById('targetRouteIdForRep').value = routeId;
             document.getElementById('modalAssignRep').classList.remove('hidden');
@@ -1769,32 +2099,70 @@
             document.getElementById('modalAssignRep').classList.add('hidden');
         };
 
-        window.salvarRepresentanteRota = async () => {
+        window.salvarRepresentantesRota = async () => {
             const routeId = document.getElementById('targetRouteIdForRep').value;
-            const repNameInput = document.getElementById('selectRepModalInput').value.trim();
-            const rep = repNameInput ? allReps.find(r => r.name.toLowerCase() === repNameInput.toLowerCase()) : null;
+            const checkboxes = document.querySelectorAll('#checkboxRepsContainer input[type="checkbox"]:checked');
+            
+            let selectedReps = [];
+            checkboxes.forEach(chk => {
+                selectedReps.push({ id: chk.getAttribute('data-id'), name: chk.value });
+            });
+
+            const primaryRep = selectedReps.length > 0 ? selectedReps[0] : null;
 
             if (useFirebase) {
                 await updateDoc(doc(db, `artifacts/${appId}/public/data/routes`, routeId), {
-                    repId: rep ? rep.id : null,
-                    repName: rep ? rep.name : null
+                    repId: primaryRep ? primaryRep.id : null,
+                    repName: primaryRep ? primaryRep.name : null,
+                    representantes: selectedReps
                 });
             } else {
                 const routes = LocalDb.get('routes');
                 const idx = routes.findIndex(r => r.id === routeId);
                 if (idx !== -1) {
-                    routes[idx].repId = rep ? rep.id : null;
-                    routes[idx].repName = rep ? rep.name : null;
+                    routes[idx].repId = primaryRep ? primaryRep.id : null;
+                    routes[idx].repName = primaryRep ? primaryRep.name : null;
+                    routes[idx].representantes = selectedReps;
                     LocalDb.set('routes', routes);
                 }
             }
 
-            if (rep) {
-                enviarNotificacaoLocal("Nova Carga Vinculada!", `Você foi vinculado para acompanhar uma carga.`);
-            }
-
             window.fecharModalAssignRep();
-            showToast(rep ? `Rota vinculada e enviada para ${rep.name}!` : "Vínculo com representante removido.", "success");
+            showToast(selectedReps.length > 0 ? `Rota vinculada a ${selectedReps.length} representante(s)!` : "Vínculos com representantes removidos.", "success");
+        };
+
+        window.abrirModalListaRepresentantes = (routeId) => {
+            const route = allRoutes.find(r => r.id === routeId);
+            if (!route) return;
+
+            const repsList = route.representantes && route.representantes.length > 0 
+                ? route.representantes 
+                : (route.repName ? [{id: route.repId, name: route.repName}] : []);
+
+            const container = document.getElementById('modalMultiRepsList');
+            if (container) {
+                container.innerHTML = '';
+                if (repsList.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-500 italic">Nenhum representante vinculado a esta carga.</p>`;
+                } else {
+                    repsList.forEach(r => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center gap-3 p-3 rounded-xl bg-purple-50 border border-purple-100";
+                        div.innerHTML = `
+                            <div class="w-8 h-8 rounded-full bg-purple-200 text-purple-800 flex items-center justify-center font-bold text-xs">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                            <span class="text-sm font-bold text-purple-900">${r.name}</span>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            }
+            document.getElementById('modalMultiReps')?.classList.remove('hidden');
+        };
+
+        window.fecharModalMultiReps = () => {
+            document.getElementById('modalMultiReps')?.classList.add('hidden');
         };
 
         window.renderAdminRoutesList = () => {
@@ -1813,7 +2181,7 @@
             if (searchTerm) {
                 activeRoutes = activeRoutes.filter(r => {
                     const matchDriver = (r.driverName || '').toLowerCase().includes(searchTerm);
-                    const matchRep = (r.repName || '').toLowerCase().includes(searchTerm);
+                    const matchRep = (r.repName || '').toLowerCase().includes(searchTerm) || (r.representantes || []).some(x => x.name.toLowerCase().includes(searchTerm));
                     const matchCarga = (r.numeroCarga || '').toLowerCase().includes(searchTerm);
                     const matchStops = r.stops?.some(s => (s.texto || s.textoOriginal || '').toLowerCase().includes(searchTerm));
                     return matchDriver || matchRep || matchCarga || matchStops;
@@ -1841,6 +2209,21 @@
                     }
                 }
 
+                const repsArr = route.representantes && route.representantes.length > 0 
+                    ? route.representantes 
+                    : (route.repName ? [{id: route.repId, name: route.repName}] : []);
+                
+                let repBadgeHtml = '';
+                if (repsArr.length > 0) {
+                    const nomesReps = repsArr.map(r => r.name).join(', ');
+                    repBadgeHtml = `
+                        <button onclick="abrirModalListaRepresentantes('${route.id}')" class="bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-900 text-xs px-3 py-1.5 rounded-lg font-bold transition-colors whitespace-nowrap inline-flex items-center gap-1.5 shadow-sm" title="Ver representantes">
+                            <i class="fa-solid fa-briefcase text-[11px] text-purple-700"></i>
+                            <span>Rep: ${nomesReps}</span>
+                        </button>
+                    `;
+                }
+
                 const div = document.createElement('div');
                 div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3";
                 div.innerHTML = `
@@ -1849,7 +2232,7 @@
                             <div class="flex items-center gap-2 flex-wrap">
                                 <p class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-truck text-emerald-500"></i> ${route.driverName}</p>
                                 ${route.numeroCarga ? `<span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2.5 py-1 rounded-md border border-emerald-100 whitespace-nowrap inline-flex items-center gap-1"><i class="fa-solid fa-barcode text-[10px]"></i>Carga: ${route.numeroCarga}</span>` : ''}
-                                ${route.repName ? `<span class="bg-purple-50 text-purple-700 text-[11px] font-bold px-2.5 py-1 rounded-md border border-purple-100 whitespace-nowrap inline-flex items-center gap-1"><i class="fa-solid fa-briefcase text-[10px]"></i>Rep: ${route.repName}</span>` : ''}
+                                ${repBadgeHtml}
                             </div>
                             <p class="text-xs text-slate-500">Início: ${formatarDataHora(route.startedAt || route.createdAt)} • ${totalCidades} cidades</p>
                         </div>
@@ -1942,21 +2325,65 @@
                 const div = document.createElement('div');
                 div.className = "bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3";
                 div.innerHTML = `
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <p class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-truck text-emerald-600 mr-1"></i> ${route.driverName}</p>
-                            ${route.numeroCarga ? `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-0.5 rounded border border-slate-200">Carga: ${route.numeroCarga}</span>` : ''}
-                            ${route.repName ? `<span class="bg-purple-50 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded border border-purple-100">Rep: ${route.repName}</span>` : ''}
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <input type="checkbox" value="${route.id}" class="checkbox-carga-finalizada rounded border-slate-300 text-purple-600 focus:ring-purple-500 w-4 h-4 shrink-0">
+                        <div class="space-y-1 min-w-0 flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <p class="font-bold text-slate-800 text-sm"><i class="fa-solid fa-truck text-emerald-600 mr-1"></i> ${route.driverName}</p>
+                                ${route.numeroCarga ? `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-0.5 rounded border border-slate-200">Carga: ${route.numeroCarga}</span>` : ''}
+                                ${route.repName ? `<span class="bg-purple-50 text-purple-700 text-[11px] font-bold px-2 py-0.5 rounded border border-purple-100">Rep: ${route.repName}</span>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-400">Finalizada em: ${formatarDataHora(route.finishedAt || route.createdAt)} • Total: ${totalCidades} cidades entregues</p>
                         </div>
-                        <p class="text-xs text-slate-400">Finalizada em: ${formatarDataHora(route.finishedAt || route.createdAt)} • Total: ${totalCidades} cidades entregues</p>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 shrink-0">
                         <button onclick="visualizarRotaAdmin('${route.id}')" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition-all">
                             <i class="fa-solid fa-eye mr-1"></i> Ver Detalhes
                         </button>
                     </div>
                 `;
                 list.appendChild(div);
+            });
+        };
+
+        window.apagarCargasSelecionadasAdmin = async () => {
+            const checkboxes = document.querySelectorAll('.checkbox-carga-finalizada:checked');
+            if (checkboxes.length === 0) {
+                return showToast("Selecione ao menos uma carga na lista de finalizadas para apagar.", "error");
+            }
+
+            let idsParaApagar = [];
+            let contemNaoFinalizada = false;
+
+            checkboxes.forEach(chk => {
+                const rId = chk.value;
+                const rObj = allRoutes.find(r => r.id === rId);
+                if (rObj) {
+                    if (rObj.status !== 'archived') {
+                        contemNaoFinalizada = true;
+                    } else {
+                        idsParaApagar.push(rId);
+                    }
+                }
+            });
+
+            if (contemNaoFinalizada) {
+                return showToast("Atenção: O sistema exige que a carga esteja totalmente finalizada e arquivada antes de permitir a exclusão definitiva.", "error");
+            }
+
+            window.pedirConfirmacao("Apagar Cargas", `Tem certeza que deseja apagar permanentemente ${idsParaApagar.length} carga(s) selecionada(s)?`, async () => {
+                if (useFirebase) {
+                    for (let idCarga of idsParaApagar) {
+                        await deleteDoc(doc(db, `artifacts/${appId}/public/data/routes`, idCarga));
+                    }
+                } else {
+                    let routes = LocalDb.get('routes');
+                    routes = routes.filter(r => !idsParaApagar.includes(r.id));
+                    LocalDb.set('routes', routes);
+                }
+                showToast("Carga(s) excluída(s) com sucesso!", "success");
+                renderAdminArchivedRoutesList();
+                renderAdminDashboard();
             });
         };
 
@@ -2155,13 +2582,13 @@
 
             if (!cargoQuery && !driverQuery) {
                 container.classList.add('hidden');
-                return showToast("Digite o número da carga ou selecione o motorista para pesquisar.", "error");
+                return showToast("Digite o número da carga ou digite o nome do motorista para pesquisar.", "error");
             }
 
             let foundList = allRoutes.filter(r => {
                 if (r.status !== 'active') return false;
                 const matchCarga = cargoQuery && (r.numeroCarga || '').toLowerCase().includes(cargoQuery);
-                const matchDriver = driverQuery && (r.driverName || '').toLowerCase() === driverQuery;
+                const matchDriver = driverQuery && (r.driverName || '').toLowerCase().includes(driverQuery);
                 return matchCarga || matchDriver;
             });
 
@@ -2230,13 +2657,47 @@
             let trackedIds = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
             
             let myRoutes = allRoutes.filter(r => {
-                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId;
+                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
                 if (repCurrentTab === 'ativas') {
                     return isTracked && r.status === 'active';
                 } else {
                     return isTracked && r.status === 'archived';
                 }
             }).sort((a,b) => b.createdAt - a.createdAt);
+
+            const allMyTrackedActive = allRoutes.filter(r => {
+                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
+                return isTracked && r.status === 'active';
+            });
+
+            let totalCidadesItinerario = 0;
+            let totalEntregasConcluidasRep = 0;
+            let totalEntregasGeralRep = 0;
+            let countEmAndamento = allMyTrackedActive.length;
+            let countProximasConclusao = 0;
+
+            allMyTrackedActive.forEach(r => {
+                if (r.stops && r.stops.length > 2) {
+                    const entregas = r.stops.slice(1, -1);
+                    totalCidadesItinerario += entregas.length;
+                    const concluidas = entregas.filter(s => s.concluido).length;
+                    totalEntregasConcluidasRep += concluidas;
+                    totalEntregasGeralRep += entregas.length;
+
+                    const pct = entregas.length > 0 ? (concluidas / entregas.length) : 0;
+                    if (pct >= 0.7 && concluidas < entregas.length) {
+                        countProximasConclusao++;
+                    }
+                }
+            });
+
+            const taxaConclusaoGeral = totalEntregasGeralRep > 0 ? Math.round((totalEntregasConcluidasRep / totalEntregasGeralRep) * 100) : 0;
+
+            document.getElementById('repMetricActive').innerText = allMyTrackedActive.length;
+            document.getElementById('repMetricCities').innerText = totalCidadesItinerario;
+            document.getElementById('repMetricRate').innerText = `${taxaConclusaoGeral}%`;
+            document.getElementById('repStatusAndamento').innerText = countEmAndamento;
+            document.getElementById('repStatusProximas').innerText = countProximasConclusao;
 
             const noRoutesDiv = document.getElementById('repNoRoutes');
             const activeRoutesList = document.getElementById('repActiveRoutesList');
@@ -2418,7 +2879,6 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
-
     </script>
 </body>
 </html>
