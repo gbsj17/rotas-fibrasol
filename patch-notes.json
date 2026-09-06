@@ -1,0 +1,78 @@
+{
+  "currentVersion": "v1.1.5",
+  "patches": [
+    {
+      "id": "patch-115",
+      "version": "v1.1.5",
+      "badge": "Novo",
+      "title": "Atualização Completa e Reforma do Painel de Representantes",
+      "details": [
+        "<strong>Atualização do Sistema:</strong> O ecossistema completo foi atualizado para englobar todas as mudanças estruturais e visuais do aplicativo.",
+        "<strong>Reforma do Painel de Representantes:</strong> Redesenho completo da interface do Representante estruturada em 3 abas dedicadas (Início/Métricas, Cargas em Andamento e Cargas Concluídas).",
+        "<strong>Layout Híbrido Responsivo:</strong> Implementação de navegação adaptativa com menu superior estilo Admin para telas de PC/Desktop e barra inferior flutuante para dispositivos Mobile.",
+        "<strong>Cards Informativos na Tela Inicial:</strong> A aba Início exibe cartões informativos estáticos destacando o número da carga, motorista responsável, última parada bem-sucedida e a próxima parada pendente.",
+        "<strong>Isolamento de Ações:</strong> Os botões interativos (como \"Visualizar Rota\" e \"Ver no Maps\") foram concentrados na aba de Cargas em Andamento para manter a tela de métricas limpa e focada.",
+        "<strong>Busca Unificada Avançada:</strong> Campo de pesquisa inteligente integrado para filtrar cargas ativas ou do histórico instantaneamente digitando o Título, o Nº da Carga ou o nome do Motorista.",
+        "<strong>Correção de Estabilidade do Administrador:</strong> Resolução definitiva do erro em ambiente de Módulo JavaScript (Strict Mode) na variável global (<code>window.admCurrentTab</code>) que impedia o funcionamento dos cliques e da alternância de abas no painel do administrador.",
+        "<strong>Otimização de Rolagem e Toque no Admin:</strong> Remoção de restrições globais de overflow indesejadas e inclusão de propriedades de toque fluido (<code>touch-pan-x</code> e <code>cursor-pointer</code>) na barra de navegação superior do Admin.",
+        "<strong>Padronização Visual Corporativa:</strong> Alinhamento de cabeçalho, bordas e destaque de abas ativas (<code>tab-active</code>) seguindo a identidade visual e as cores roxas corporativas do painel."
+      ]
+    },
+    {
+      "id": "patch-114",
+      "version": "v1.1.4",
+      "badge": "",
+      "title": "Layout, Navegação Fixa e Correções Admin",
+      "details": [
+        "<strong>Layout e Navegação Fixa:</strong> Cabeçalho e rodapé fixos com rolagem independente otimizada para mobile.",
+        "<strong>Padronização Visual:</strong> Altura e respiro de topo unificados em todas as abas do painel administrador.",
+        "<strong>Identidade Representantes:</strong> Dinamismo visual com o tema roxo corporativo (<code>purple-600</code>) na aba de Reps.",
+        "<strong>Acessibilidade Mobile:</strong> Ajuste de tamanhos de fontes e inputs para evitar zoom automático em dispositivos iOS."
+      ]
+    },
+    {
+      "id": "patch-113",
+      "version": "v1.1.3",
+      "badge": "",
+      "title": "Modal Interativo e Histórico",
+      "details": [
+        "<strong>Modal Interativo:</strong> Mini-cards expansíveis (accordion) para visualização organizada das versões.",
+        "<strong>Navegação de Histórico:</strong> Clicar em cada versão expande e mostra os detalhes das atualizações.",
+        "<strong>Interface Otimizada:</strong> Redução de poluição visual dentro das opções do sistema."
+      ]
+    },
+    {
+      "id": "patch-112",
+      "version": "v1.1.2",
+      "badge": "",
+      "title": "Navegação Mobile Inferior",
+      "details": [
+        "<strong>Navegação Mobile Inferior:</strong> Barra de navegação fixa na parte inferior do celular (estilo app nativo).",
+        "<strong>Layout Híbrido Responsivo:</strong> Barra superior mantida no Desktop/Web e navegação embutida para mobile.",
+        "<strong>Rolagem Contínua:</strong> Ajuste de margens e padding para o conteúdo rolar por trás dos menus fixos."
+      ]
+    },
+    {
+      "id": "patch-111",
+      "version": "v1.1.1",
+      "badge": "",
+      "title": "Autocompletar e Ranking de Cidades",
+      "details": [
+        "<strong>Autocompletar de Motoristas:</strong> Busca dinâmica nos logins e pesquisa de representantes.",
+        "<strong>Ranking de Cidades:</strong> Novo painel analítico com gráfico das cidades de maior demanda.",
+        "<strong>Status Firebase:</strong> Indicador em tempo real restaurado no cabeçalho."
+      ]
+    },
+    {
+      "id": "patch-110",
+      "version": "v1.1.0",
+      "badge": "",
+      "title": "Múltiplos Representantes",
+      "details": [
+        "<strong>Múltiplos Representantes:</strong> Vincular mais de um representante a uma mesma carga.",
+        "<strong>Métricas Reps:</strong> Novo painel com total de ativas, cidades e % de conclusão.",
+        "<strong>Visualização de Rota:</strong> Modal com todos os detalhes e progresso real das paradas."
+      ]
+    }
+  ]
+}

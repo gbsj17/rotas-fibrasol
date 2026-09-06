@@ -80,6 +80,10 @@
         .splash-fade-out {
             animation: androidFadeOut 0.4s ease-out forwards;
         }
+        /* Transição suave estilo WhatsApp para as abas mobile */
+        .tab-pane-transition {
+            transition: transform 0.25s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s ease-in-out;
+        }
     </style>
 </head>
 <body class="h-full text-slate-800 antialiased flex flex-col justify-between relative">
@@ -137,19 +141,37 @@
                     <button onclick="alternarPatchNotesBox()" class="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left">
                         <div class="flex items-center space-x-3">
                             <i class="fa-solid fa-file-code text-slate-500"></i>
-                            <span class="text-sm font-medium text-slate-700">Notas da Versão (v1.1.4)</span>
+                            <span class="text-sm font-medium text-slate-700">Notas da Versão (<span class="app-version-text">v1.1.5</span>)</span>
                         </div>
                         <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                     </button>
 
                     <div id="patchNotesBox" class="hidden bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 max-h-[50vh] overflow-y-auto screen-android-animate">
-                        <h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões</h4>
+                        <h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões (<span class="app-version-text">v1.1.5</span>)</h4>
                         
                         <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-114')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
+                            <button onclick="togglePatch('patch-115')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
                                 <span class="text-xs font-bold text-[#152e50] flex items-center gap-2">
-                                    <i class="fa-solid fa-box-open text-slate-400"></i> v1.1.4 
+                                    <i class="fa-solid fa-box-open text-slate-400"></i> v1.1.5 
                                     <span class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">Novo</span>
+                                </span>
+                                <i id="icon-patch-115" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
+                            </button>
+                            <div id="patch-115" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
+                                <ul class="list-disc pl-4 space-y-1.5">
+                                    <li><strong>Navegação de Representantes:</strong> Redesenho completo com 3 abas dedicadas: Início (Métricas), Cargas em Andamento e Cargas Concluídas.</li>
+                                    <li><strong>Interface Responsiva Híbrida:</strong> Menu superior no Desktop e barra inferior fixa no Mobile.</li>
+                                    <li><strong>Cards Informativos na Tela Inicial:</strong> Exibição estática de número da carga, motorista, última parada concluída e próxima pendente.</li>
+                                    <li><strong>Isolamento de Ações:</strong> Botões interativos concentrados exclusivamente na aba de Cargas em Andamento.</li>
+                                    <li><strong>Busca Unificada:</strong> Campo de pesquisa inteligente para Título, Nº da Carga ou Motorista.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                            <button onclick="togglePatch('patch-114')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
+                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2">
+                                    <i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.4 
                                 </span>
                                 <i id="icon-patch-114" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
                             </button>
@@ -523,12 +545,13 @@
             </form>
         </div>
     </div>
+
         <!-- ========================================== -->
         <!-- TODO: Bloco 4: Painel Administrador        -->
         <!-- ========================================== -->
-        <div id="dashboardAdmin" class="hidden h-full flex flex-col bg-slate-100 overflow-hidden relative">
-            <div class="fixed top-0 left-0 right-0 z-30 bg-white sm:bg-[#152e50] shadow-sm sm:shadow-md border-b sm:border-slate-800">
-                <header class="p-4 flex items-center justify-between text-slate-800 sm:text-white">
+        <div id="dashboardAdmin" class="hidden h-full flex flex-col bg-slate-100 overflow-x-hidden overflow-y-auto relative">
+            <div class="fixed top-0 left-0 right-0 z-30 w-full bg-white sm:bg-[#152e50] shadow-sm sm:shadow-md border-b sm:border-slate-800">
+                <header class="p-4 flex items-center justify-between text-slate-800 sm:text-white w-full">
                     <div class="flex items-center gap-3">
                         <div id="adminHeaderIconBg" class="w-9 h-9 rounded-xl bg-[#152e50] sm:bg-white/10 flex items-center justify-center font-bold text-sm text-white transition-colors">
                             <i id="adminHeaderMobileIcon" class="fa-solid fa-route"></i>
@@ -547,20 +570,20 @@
                     </button>
                 </header>
 
-                <div class="hidden sm:flex bg-white border-b border-slate-200 text-xs font-semibold text-slate-500 overflow-x-auto hide-scrollbar whitespace-nowrap">
-                    <button id="tabRotas" onclick="alternarAbaAdmin('rotas')" class="flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all">
+                <div class="hidden sm:flex w-full bg-white border-b border-slate-200 text-xs font-semibold text-slate-500 overflow-x-auto hide-scrollbar whitespace-nowrap touch-pan-x relative z-40">
+                    <button id="tabRotas" onclick="alternarAbaAdmin('rotas')" class="flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all cursor-pointer">
                         <i class="fa-solid fa-route"></i> Rotas
                     </button>
-                    <button id="tabDashboard" onclick="alternarAbaAdmin('dashboard')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <button id="tabDashboard" onclick="alternarAbaAdmin('dashboard')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50 cursor-pointer">
                         <i class="fa-solid fa-chart-pie"></i> Dashboard
                     </button>
-                    <button id="tabMotoristas" onclick="alternarAbaAdmin('motoristas')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <button id="tabMotoristas" onclick="alternarAbaAdmin('motoristas')" class="flex-1 min-w-[120px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50 cursor-pointer">
                         <i class="fa-solid fa-users"></i> Motoristas
                     </button>
-                    <button id="tabRepresentantes" onclick="alternarAbaAdmin('representantes')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <button id="tabRepresentantes" onclick="alternarAbaAdmin('representantes')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50 cursor-pointer">
                         <i class="fa-solid fa-briefcase"></i> Representantes
                     </button>
-                    <button id="tabAdmins" onclick="alternarAbaAdmin('admins')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                    <button id="tabAdmins" onclick="alternarAbaAdmin('admins')" class="flex-1 min-w-[150px] py-4 px-5 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50 cursor-pointer">
                         <i class="fa-solid fa-user-shield"></i> Administradores
                     </button>
                 </div>
@@ -787,9 +810,10 @@
                 </button>
             </nav>
         </div>
-<!-- ========================================== -->
-<!-- TODO: Bloco 5: Painel Motorista            -->
-<!-- ========================================== -->
+
+        <!-- ========================================== -->
+        <!-- TODO: Bloco 5: Painel Motorista            -->
+        <!-- ========================================== -->
 <div id="dashboardDriver" class="hidden min-h-full flex flex-col bg-slate-100 relative">
         <header class="bg-emerald-600 text-white p-4 fixed top-0 left-0 right-0 z-40 shadow-md flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -861,27 +885,56 @@
             </div>
         </main>
     </div>
-<!-- ========================================== -->
-<!-- TODO: Bloco 6: Painel Representante        -->
-<!-- ========================================== -->
-<div id="dashboardRepresentative" class="hidden min-h-full flex flex-col bg-slate-100">
-        <header class="bg-purple-700 text-white p-4 sticky top-0 z-30 shadow-md flex items-center justify-between">
+        <!-- ========================================== -->
+        <!-- TODO: Bloco 6: Painel Representante        -->
+        <!-- ========================================== -->
+<div id="dashboardRepresentative" class="hidden h-full flex flex-col bg-slate-100 overflow-hidden relative">
+    
+    <!-- Topo + Abas Desktop com Fundo Branco no Mobile e Roxo no PC -->
+    <div class="fixed top-0 left-0 right-0 z-30 bg-white sm:bg-purple-700 shadow-sm sm:shadow-md border-b border-slate-200 sm:border-purple-800">
+        <header class="p-4 flex items-center justify-between text-slate-800 sm:text-white">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold text-sm">
+                <!-- Ícone Roxo no mobile, branco/translúcido no PC -->
+                <div class="w-9 h-9 rounded-xl bg-purple-700 sm:bg-white/10 flex items-center justify-center font-bold text-sm text-white transition-colors shadow-sm">
                     <i class="fa-solid fa-briefcase"></i>
                 </div>
                 <div>
-                    <h2 id="repWelcomeName" class="font-bold text-sm">Representante</h2>
-                    <p class="text-[10px] text-purple-200">Acompanhamento de Múltiplas Cargas</p>
+                    <div class="flex items-center gap-2">
+                        <!-- Título Escuro no mobile, Branco no PC -->
+                        <h2 id="repWelcomeName" class="font-bold text-base sm:text-sm text-slate-900 sm:text-white">Rep: Representante</h2>
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_6px_#34d399]" title="Status Online"></span>
+                    </div>
+                    <!-- Subtítulo Cinza no mobile, Lilás no PC -->
+                    <p class="text-xs sm:text-[10px] text-slate-500 sm:text-purple-200">Acompanhamento de Múltiplas Cargas • v1.1.5</p>
                 </div>
             </div>
-            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white hover:bg-slate-50 transition-colors text-purple-700 border border-purple-600 flex items-center justify-center shadow-sm">
+            <!-- Botão de Engrenagem Cinza no mobile, Translúcido no PC -->
+            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-slate-100 sm:bg-white/10 hover:bg-slate-200 sm:hover:bg-white/20 transition-colors text-purple-700 sm:text-white border border-slate-200 sm:border-white/20 flex items-center justify-center shadow-sm">
                 <i class="fa-solid fa-gear text-lg"></i>
                 <span class="patch-badge-notice absolute -top-1 -right-1 w-3 h-3 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
             </button>
         </header>
 
-        <main class="p-4 space-y-4 flex-1 max-w-xl mx-auto w-full screen-android-animate">
+        <!-- Menu de Abas estilo Admin no Desktop / PC -->
+        <div class="hidden sm:flex bg-white border-b border-slate-200 text-xs font-semibold text-slate-500 overflow-x-auto hide-scrollbar whitespace-nowrap">
+            <button id="repTabHeaderInicio" onclick="alternarAbaRepresentante('inicio')" class="flex-1 min-w-[140px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all">
+                <i class="fa-solid fa-chart-pie"></i> Início (Métricas)
+            </button>
+            <button id="repTabHeaderAtivas" onclick="alternarAbaRepresentante('ativas')" class="flex-1 min-w-[160px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                <i class="fa-solid fa-truck-fast"></i> Cargas em Andamento
+            </button>
+            <button id="repTabHeaderConcluidas" onclick="alternarAbaRepresentante('concluidas')" class="flex-1 min-w-[160px] py-4 px-4 text-center flex items-center justify-center gap-2 transition-all hover:bg-slate-50">
+                <i class="fa-solid fa-boxes-packing"></i> Cargas Concluídas
+            </button>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal com Rolagem -->
+    <main class="flex-1 overflow-y-auto p-4 space-y-4 max-w-xl mx-auto w-full pt-24 sm:pt-36 pb-24 sm:pb-8 screen-android-animate">
+        
+        <!-- ================= ABA 1: INÍCIO / MÉTRICAS ================= -->
+        <div id="repSectionInicio" class="space-y-4">
+            <!-- Métricas Principais -->
             <div class="grid grid-cols-3 gap-2">
                 <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm text-center">
                     <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mx-auto mb-1 text-xs">
@@ -906,6 +959,7 @@
                 </div>
             </div>
 
+            <!-- Cards de Status -->
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
                     <div>
@@ -927,45 +981,78 @@
                 </div>
             </div>
 
+            <!-- Resumo das Cargas na Tela Inicial -->
+            <div class="space-y-3 pt-2">
+                <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-truck-fast text-purple-600"></i> Cargas Acompanhadas Ativas
+                </h3>
+                <div id="repInicioActiveList" class="space-y-3"></div>
+            </div>
+        </div>
+
+        <!-- ================= ABA 2: CARGAS EM ANDAMENTO ================= -->
+        <div id="repSectionAtivas" class="hidden space-y-4">
+            <!-- Barra de Busca Unificada (Ativas) -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Carga</label>
-                        <input type="text" id="searchRepCargoInput" placeholder="Nº da carga..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Motorista</label>
-                        <div class="relative" id="repDriverAutocompleteContainer">
-                            <input type="text" id="searchRepDriverInput" placeholder="Nome do motorista..." autocomplete="off" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
-                            <div id="repDriverSuggestionsDropdown" class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto"></div>
-                        </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Cargas Ativas</label>
+                    <div class="relative">
+                        <input type="text" id="searchRepUnifiedActiveInput" oninput="filtrarCargasAtivasRep()" placeholder="Digite o Título, Nº da Carga ou Motorista..." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 pl-10">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
                     </div>
                 </div>
-                <button onclick="pesquisarCargaRepresentante()" class="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow transition-all flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-magnifying-glass"></i> Pesquisar Carga / Motorista
-                </button>
             </div>
 
-            <div id="repSearchResultContainer" class="hidden space-y-2"></div>
-
-            <div class="flex border-b border-slate-200 text-xs font-bold text-slate-500">
-                <button id="repTabAtivas" onclick="alternarAbaRepresentante('ativas')" class="flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white">Cargas Acompanhadas</button>
-                <button id="repTabConcluidas" onclick="alternarAbaRepresentante('concluidas')" class="flex-1 py-3 text-center border-b-2 border-transparent hover:text-slate-700">Cargas Concluídas</button>
-            </div>
-
-            <div id="repNoRoutes" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center space-y-3">
-                <div class="w-16 h-16 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center mx-auto text-2xl">
-                    <i class="fa-solid fa-boxes-packing"></i>
-                </div>
-                <h3 class="font-bold text-slate-800 text-base">Nenhuma carga acompanhada</h3>
-                <p class="text-xs text-slate-500">Pesquise por uma carga ou motorista acima e clique em "Sim" para começar a acompanhar.</p>
-            </div>
             <div id="repActiveRoutesList" class="space-y-4"></div>
-        </main>
-    </div>
-<!-- ====================================================== -->
-<!-- TODO: Bloco 7: Script JS Completo + Fechamento do HTML -->
-<!-- ====================================================== -->
+        </div>
+
+        <!-- ================= ABA 3: CARGAS CONCLUÍDAS ================= -->
+        <div id="repSectionConcluidas" class="hidden space-y-4">
+            <!-- Barra de Busca Unificada (Concluídas) -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Buscar Cargas Concluídas (Inativas)</label>
+                    <div class="relative">
+                        <input type="text" id="searchRepUnifiedArchivedInput" oninput="filtrarCargasConcluidasRep()" placeholder="Digite o Título, Nº da Carga ou Motorista..." class="w-full px-4 py-3 rounded-xl border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-purple-600 pl-10">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div id="repArchivedRoutesList" class="space-y-4"></div>
+        </div>
+
+        <!-- Estado Vazio -->
+        <div id="repNoRoutes" class="hidden bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center space-y-3">
+            <div class="w-16 h-16 bg-purple-50 text-purple-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-boxes-packing"></i>
+            </div>
+            <h3 class="font-bold text-slate-800 text-base">Nenhuma carga encontrada</h3>
+            <p class="text-xs text-slate-500">Nenhum registro para exibir nesta seção no momento.</p>
+        </div>
+
+    </main>
+
+    <!-- Navegação Flutuante Inferior para Mobile / App -->
+    <nav class="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-slate-200 flex items-center justify-around py-3 shadow-[0_-4px_12px_rgba(0,0,0,0.05)]">
+        <button id="mobileRepTabInicio" onclick="alternarAbaRepresentante('inicio')" class="flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600 bottom-nav-active">
+            <i class="fa-solid fa-chart-pie text-xl"></i>
+            <span>Início</span>
+        </button>
+        <button id="mobileRepTabAtivas" onclick="alternarAbaRepresentante('ativas')" class="flex flex-col items-center gap-1.5 text-[11px] font-medium text-slate-400">
+            <i class="fa-solid fa-truck-fast text-xl"></i>
+            <span>Andamento</span>
+        </button>
+        <button id="mobileRepTabConcluidas" onclick="alternarAbaRepresentante('concluidas')" class="flex flex-col items-center gap-1.5 text-[11px] font-medium text-slate-400">
+            <i class="fa-solid fa-boxes-packing text-xl"></i>
+            <span>Concluídas</span>
+        </button>
+    </nav>
+</div>
+
+        <!-- ====================================================== -->
+        <!-- TODO: Bloco 7: Script JS Completo + Fechamento do HTML -->
+        <!-- ====================================================== -->
 <script type="module">
         // ========================================================
         // TODO: BLOCO 7.1: CONFIGURAÇÕES, FIREBASE E ESTADO GLOBAL
@@ -982,7 +1069,7 @@
         let db = null;
         let useFirebase = false;
         const appId = "pwa-logistica-v2";
-        const CURRENT_VERSION = "v1.1.4";
+        const CURRENT_VERSION = "v1.1.5";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAUCNdX_mMJ2IiMrDGYpMF6qs1USC5KJ0k",
@@ -993,6 +1080,46 @@
             appId: "1:995676671271:web:6a8a4e25cb0380993fed02",
             measurementId: "G-SP7RC3KSL2"
         };
+
+        async function carregarPatchNotesDinamico() {
+            try {
+                const response = await fetch('patch-notes.json');
+                const data = await response.json();
+
+                document.querySelectorAll('.app-version-text').forEach(el => {
+                    el.innerText = data.currentVersion;
+                });
+
+                const container = document.getElementById('patchNotesBox');
+                if (!container) return;
+
+                let htmlContent = `<h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões (${data.currentVersion})</h4>`;
+
+                data.patches.forEach(patch => {
+                    let bulletsHtml = patch.details.map(item => `<li>${item}</li>`).join('');
+                    htmlContent += `
+                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm mb-2">
+                            <button onclick="togglePatch('${patch.id}')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors cursor-pointer">
+                                <span class="text-xs font-bold ${patch.badge ? 'text-[#152e50]' : 'text-slate-700'} flex items-center gap-2">
+                                    <i class="fa-solid fa-box-open text-slate-400"></i> ${patch.version} 
+                                    ${patch.badge ? `<span class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">${patch.badge}</span>` : ''}
+                                </span>
+                                <i id="icon-${patch.id}" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
+                            </button>
+                            <div id="${patch.id}" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
+                                <ul class="list-disc pl-4 space-y-1.5">
+                                    ${bulletsHtml}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = htmlContent;
+            } catch (error) {
+                console.error("Erro ao carregar o patch-notes.json:", error);
+            }
+        }
 
         window.togglePatch = (patchId) => {
             const patchDiv = document.getElementById(patchId);
@@ -1160,7 +1287,6 @@
         window.fecharGuiaInstalacaoPwa = () => {
             document.getElementById('pwaInstallGuideModal')?.classList.add('hidden');
         };
-
 
         // ==============================================
         // TODO: BLOCO 7.2: AUTENTICAÇÃO, MODAIS E SESSÃO
@@ -1496,9 +1622,50 @@
             showToast("Sessão encerrada com sucesso");
         };
 
-        // ===============================================
+        // ====================================================
         // TODO: BLOCO 7.3: LÓGICA DO PAINEL ADMINISTRADOR
-        // ===============================================
+        // ====================================================
+
+        // -----------------------------------------------------
+        // TODO: BLOCO 7.3-1: INICIALIZAÇÃO, ABAS E SWIPE MOBILE
+        // -----------------------------------------------------
+        let adminTouchStartX = 0;
+        let adminTouchEndX = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminDashboard = document.getElementById('dashboardAdmin');
+            if (!adminDashboard) return;
+
+            adminDashboard.addEventListener('touchstart', e => {
+                adminTouchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            adminDashboard.addEventListener('touchend', e => {
+                adminTouchEndX = e.changedTouches[0].screenX;
+                tratarSwipeAdmin();
+            }, { passive: true });
+        });
+
+        function tratarSwipeAdmin() {
+            if (window.innerWidth >= 640) return; // Apenas em telas mobile
+
+            const threshold = 50; // Distância mínima para o gesto
+            const diff = adminTouchEndX - adminTouchStartX;
+
+            if (Math.abs(diff) < threshold) return;
+
+            const admTabs = ['rotas', 'dashboard', 'motoristas', 'representantes', 'admins'];
+            const currentIndex = admTabs.indexOf(typeof window.admCurrentTab !== 'undefined' ? window.admCurrentTab : 'rotas');
+
+            if (currentIndex === -1) return;
+
+            if (diff < 0 && currentIndex < admTabs.length - 1) {
+                alternarAbaAdmin(admTabs[currentIndex + 1], 'left');
+            } else if (diff > 0 && currentIndex > 0) {
+                alternarAbaAdmin(admTabs[currentIndex - 1], 'right');
+            }
+        }
+
         function iniciarPainelAdmin() {
             mostrarTelaComAnimacao('dashboardAdmin');
             startAdminListeners();
@@ -1507,10 +1674,11 @@
             renderAdminRoutesList();
             renderAdminArchivedRoutesList();
             renderAdminDashboard();
-            alternarAbaAdmin('rotas');
+            alternarAbaAdmin('rotas', 'none');
         }
 
-        window.alternarAbaAdmin = (tab) => {
+        window.alternarAbaAdmin = (tab, direction = 'none') => {
+            window.admCurrentTab = tab;
             const tabs = [
                 {id: 'tabRotas', mobileId: 'mobileTabRotas', contentId: 'contentRotas', title: 'Rotas', subtitle: 'Cargas em andamento e novas rotas', icon: 'fa-route'},
                 {id: 'tabDashboard', mobileId: 'mobileTabDashboard', contentId: 'contentDashboard', title: 'Dashboard', subtitle: 'Métricas e análises gerais de entregas', icon: 'fa-chart-pie'},
@@ -1521,36 +1689,69 @@
 
             tabs.forEach(t => {
                 const dt = document.getElementById(t.id);
-                if (dt) dt.className = "flex-1 min-w-[120px] py-4 px-4 text-center text-slate-500 transition-all hover:bg-slate-50";
+                if (dt) dt.className = "flex-1 min-w-[120px] py-4 px-4 text-center text-slate-500 transition-all hover:bg-slate-50 cursor-pointer";
                 
                 const mt = document.getElementById(t.mobileId);
                 if (mt) mt.className = "flex flex-col items-center gap-1.5 text-[11px] font-medium text-slate-400";
-
-                const cnt = document.getElementById(t.contentId);
-                if (cnt) cnt.classList.add('hidden');
             });
 
             const currentTabObj = tabs.find(t => t.id === `tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`);
             if (currentTabObj) {
                 const dtActive = document.getElementById(currentTabObj.id);
-                if (dtActive) dtActive.className = "flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
+                if (dtActive) dtActive.className = "flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all cursor-pointer";
 
-                // TROCA A COR DO ÍCONE DO MENU INFERIOR
                 const mtActive = document.getElementById(currentTabObj.mobileId);
                 if (mtActive) {
                     if (tab === 'representantes') {
-                        mtActive.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600";
+                        mtActive.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600 bottom-nav-active";
                     } else {
-                        mtActive.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-[#152e50]";
+                        mtActive.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-[#152e50] bottom-nav-active";
                     }
                 }
 
-                const targetContent = document.getElementById(currentTabObj.contentId);
-                if (targetContent) {
-                    targetContent.classList.remove('hidden');
-                    targetContent.classList.remove('screen-android-animate');
-                    void targetContent.offsetWidth;
-                    targetContent.classList.add('screen-android-animate');
+                // Animação de transição fluida nas seções (Mobile vs Desktop)
+                const secoesAdmin = {
+                    'rotas': document.getElementById('contentRotas'),
+                    'dashboard': document.getElementById('contentDashboard'),
+                    'motoristas': document.getElementById('contentMotoristas'),
+                    'representantes': document.getElementById('contentRepresentantes'),
+                    'admins': document.getElementById('contentAdmins')
+                };
+
+                if (window.innerWidth < 640) {
+                    Object.keys(secoesAdmin).forEach(key => {
+                        const el = secoesAdmin[key];
+                        if (!el) return;
+
+                        if (key === tab) {
+                            el.classList.remove('hidden');
+                            el.classList.add('tab-pane-transition');
+
+                            if (direction === 'left') {
+                                el.style.transform = 'translateX(25px)';
+                                el.style.opacity = '0';
+                            } else if (direction === 'right') {
+                                el.style.transform = 'translateX(-25px)';
+                                el.style.opacity = '0';
+                            } else {
+                                el.style.transform = 'translateX(0)';
+                                el.style.opacity = '1';
+                            }
+
+                            setTimeout(() => {
+                                el.style.transform = 'translateX(0)';
+                                el.style.opacity = '1';
+                            }, 10);
+                        } else {
+                            el.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    Object.keys(secoesAdmin).forEach(key => {
+                        if (secoesAdmin[key]) {
+                            secoesAdmin[key].classList.toggle('hidden', key !== tab);
+                        }
+                    });
                 }
 
                 const hTitle = document.getElementById('adminHeaderTitle');
@@ -1562,7 +1763,6 @@
                 const hIcon = document.getElementById('adminHeaderMobileIcon');
                 if (hIcon) hIcon.className = `fa-solid ${currentTabObj.icon}`;
 
-                // TROCA A COR DO ÍCONE DO CABEÇALHO SUPERIOR
                 const iconBg = document.getElementById('adminHeaderIconBg');
                 if (iconBg) {
                     if (tab === 'representantes') {
@@ -1578,6 +1778,9 @@
             }
         };
 
+        // -----------------------------------------------------------------
+        // TODO: BLOCO 7.3-2: CADASTROS E GESTÃO DE CONTAS (MODAL DE SENHAS)
+        // -----------------------------------------------------------------
         window.abrirModalEditarSenha = (id, type, name, currentPin) => {
             document.getElementById('editUserId').value = id;
             document.getElementById('editUserType').value = type;
@@ -1681,6 +1884,10 @@
             renderAdminRepsList();
         };
 
+
+        // --------------------------------------------------------------------
+        // TODO: BLOCO 7.3-3: RENDERIZAÇÃO DE LISTAS (ADMINS, MOTORISTAS, REPS)
+        // --------------------------------------------------------------------
         window.renderAdminAdminsList = () => {
             const list = document.getElementById('adminAdminsList');
             const searchTerm = (document.getElementById('searchAdminsInput')?.value || '').toLowerCase().trim();
@@ -1823,6 +2030,10 @@
             });
         };
 
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-4: DASHBOARD, MÉTRICAS E RANKINGS
+        // ----------------------------------------------------
         window.renderAdminDashboard = () => {
             const activeCountElem = document.getElementById('dashActiveCount');
             const proximasElem = document.getElementById('dashProximasConclusaoCount');
@@ -1938,6 +2149,13 @@
             });
         };
 
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5: GERENCIAMENTO E CRIAÇÃO DE ROTAS
+        // ----------------------------------------------------
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5A: MODAIS DE CONFIRMAÇÃO E EXCLUSÃO
+        // ----------------------------------------------------
         window.pedirConfirmacao = (titulo, mensagem, acao) => {
             document.getElementById('confirmTitle').innerText = titulo;
             document.getElementById('confirmMessage').innerText = mensagem;
@@ -1992,6 +2210,10 @@
             });
         };
 
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5B: PROCESSAMENTO DE URL E FORMATAÇÃO DE PARADAS
+        // ----------------------------------------------------
         function extrairPontosDaUrl(url) {
             let pontos = [];
             try {
@@ -2038,6 +2260,10 @@
             return `${d.toLocaleDateString('pt-BR')} às ${d.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}`;
         }
 
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5C: CRIAÇÃO E ATRIBUIÇÃO DE ROTAS
+        // ----------------------------------------------------
         window.gerarEAtribuirRota = async () => {
             const rawInput = document.getElementById('urlInput').value.trim();
             const cargoNumber = document.getElementById('cargoNumberInput').value.trim();
@@ -2109,6 +2335,10 @@
             }
         };
 
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5D: GESTÃO DE VÍNCULOS COM REPRESENTANTES
+        // ----------------------------------------------------
         window.abrirModalEnviarRep = (routeId) => {
             const container = document.getElementById('checkboxRepsContainer');
             const route = allRoutes.find(r => r.id === routeId);
@@ -2205,6 +2435,10 @@
             document.getElementById('modalMultiReps')?.classList.add('hidden');
         };
 
+
+        // ----------------------------------------------------
+        // TODO: BLOCO 7.3-5E: RENDERIZAÇÃO, ARQUIVAMENTO E VISUALIZAÇÃO DE ROTAS
+        // ----------------------------------------------------
         window.renderAdminRoutesList = () => {
             const list = document.getElementById('adminRoutesList');
             const summaryText = document.getElementById('adminActiveCountSummary');
@@ -2499,10 +2733,52 @@
             });
         };
 
+        // ==================================================================
+        // TODO: BLOCO 7.4: LÓGICA DO MOTORISTA, REPRESENTANTE E SWIPE MOBILE
+        // ==================================================================
 
-        // ====================================================
-        // TODO: BLOCO 7.4: LÓGICA DO MOTORISTA E REPRESENTANTE
-        // ====================================================
+        // --------------------------------------------------------------------
+        // TODO: BLOCO 7.4-1: GESTO DE SWIPE MOBILE E INICIALIZAÇÃO DOS PAINÉIS
+        // --------------------------------------------------------------------
+        let repTouchStartX = 0;
+        let repTouchEndX = 0;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const repDashboard = document.getElementById('dashboardRepresentative');
+            if (!repDashboard) return;
+
+            repDashboard.addEventListener('touchstart', e => {
+                repTouchStartX = e.changedTouches[0].screenX;
+            }, { passive: true });
+
+            repDashboard.addEventListener('touchend', e => {
+                repTouchEndX = e.changedTouches[0].screenX;
+                tratarSwipeRepresentante();
+            }, { passive: true });
+        });
+
+        function tratarSwipeRepresentante() {
+            if (window.innerWidth >= 640) return; // Apenas para telas mobile
+
+            const threshold = 50; // Distância mínima em pixels para considerar o gesto
+            const diff = repTouchEndX - repTouchStartX;
+
+            if (Math.abs(diff) < threshold) return;
+
+            const tabs = ['inicio', 'ativas', 'concluidas'];
+            const currentIndex = tabs.indexOf(typeof repCurrentTab !== 'undefined' ? repCurrentTab : 'inicio');
+
+            if (currentIndex === -1) return;
+
+            if (diff < 0 && currentIndex < tabs.length - 1) {
+                // Deslizou para a esquerda -> Próxima aba (avança)
+                alternarAbaRepresentante(tabs[currentIndex + 1], 'left');
+            } else if (diff > 0 && currentIndex > 0) {
+                // Deslizou para a direita -> Aba anterior (volta)
+                alternarAbaRepresentante(tabs[currentIndex - 1], 'right');
+            }
+        }
+
         function iniciarPainelMotorista(driver) {
             mostrarTelaComAnimacao('dashboardDriver');
             document.getElementById('driverWelcomeName').innerText = `Motorista: ${driver ? driver.name : 'Logado'}`;
@@ -2512,11 +2788,19 @@
 
         function iniciarPainelRepresentante(rep) {
             mostrarTelaComAnimacao('dashboardRepresentative');
-            document.getElementById('repWelcomeName').innerText = `Rep: ${rep ? rep.name : 'Logado'}`;
+            const nameElem = document.getElementById('repWelcomeName');
+            if (nameElem) {
+                nameElem.innerText = `Rep: ${rep ? rep.name : 'Logado'}`;
+                nameElem.className = "font-bold text-base sm:text-sm text-slate-900 sm:text-white";
+            }
             startRepListeners();
-            renderRepDashboard();
+            alternarAbaRepresentante('inicio', 'none');
         }
 
+
+        // ---------------------------------------------------------------
+        // TODO: BLOCO 7.4-2: RENDERIZAÇÃO E GESTÃO DO PAINEL DO MOTORISTA
+        // ---------------------------------------------------------------
         function renderDriverDashboard() {
             const currentDriver = allDrivers.find(d => d.id === currentDriverId);
             const myRoutes = allRoutes.filter(r => r.driverId === currentDriverId);
@@ -2535,12 +2819,10 @@
 
             const noRouteDiv = document.getElementById('driverNoRoute');
             const activeRouteDiv = document.getElementById('driverActiveRoute');
-            const btnOpenMaps = document.getElementById('btnOpenMaps');
             
             if (activeRoutes.length === 0) {
                 noRouteDiv.classList.remove('hidden');
                 activeRouteDiv.classList.add('hidden');
-                btnOpenMaps.classList.add('hidden');
                 document.getElementById('driverDaysSummary').innerText = "0 dias";
                 document.getElementById('driverKmSummary').innerText = "-- km";
                 return;
@@ -2549,7 +2831,6 @@
             const activeRoute = activeRoutes.sort((a,b) => b.createdAt - a.createdAt)[0];
             noRouteDiv.classList.add('hidden');
             activeRouteDiv.classList.remove('hidden');
-            btnOpenMaps.classList.remove('hidden');
 
             const startMs = activeRoute.startedAt || activeRoute.createdAt;
             const diffDays = Math.max(1, Math.ceil((Date.now() - startMs) / (1000 * 60 * 60 * 24)));
@@ -2557,13 +2838,6 @@
 
             const totalStopsCount = activeRoute.stops ? activeRoute.stops.length : 0;
             document.getElementById('driverKmSummary').innerText = totalStopsCount > 0 ? `~${totalStopsCount * 45} km` : "-- km";
-
-            if (activeRoute.rawUrl && activeRoute.rawUrl.trim() !== '') {
-                let link = activeRoute.rawUrl.trim();
-                btnOpenMaps.href = (link.startsWith('http://') || link.startsWith('https://')) ? link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
-            } else {
-                btnOpenMaps.href = `https://www.google.com/maps`;
-            }
 
             const entregas = activeRoute.stops.slice(1, -1);
             const totalCidades = entregas.length;
@@ -2618,208 +2892,6 @@
             });
         }
 
-        window.alternarAbaRepresentante = (tab) => {
-            repCurrentTab = tab;
-            const btnAtivas = document.getElementById('repTabAtivas');
-            const btnConcluidas = document.getElementById('repTabConcluidas');
-
-            if (tab === 'ativas') {
-                btnAtivas.className = "flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white font-bold";
-                btnConcluidas.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700";
-            } else {
-                btnConcluidas.className = "flex-1 py-3 text-center border-b-2 border-purple-600 text-purple-700 bg-white font-bold";
-                btnAtivas.className = "flex-1 py-3 text-center border-b-2 border-transparent text-slate-500 hover:text-slate-700";
-            }
-            renderRepDashboard();
-        };
-
-        window.pesquisarCargaRepresentante = () => {
-            const cargoQuery = (document.getElementById('searchRepCargoInput')?.value || '').toLowerCase().trim();
-            const driverQuery = (document.getElementById('searchRepDriverInput')?.value || '').toLowerCase().trim();
-            const container = document.getElementById('repSearchResultContainer');
-
-            if (!cargoQuery && !driverQuery) {
-                container.classList.add('hidden');
-                return showToast("Digite o número da carga ou digite o nome do motorista para pesquisar.", "error");
-            }
-
-            let foundList = allRoutes.filter(r => {
-                if (r.status !== 'active') return false;
-                const matchCarga = cargoQuery && (r.numeroCarga || '').toLowerCase().includes(cargoQuery);
-                const matchDriver = driverQuery && (r.driverName || '').toLowerCase().includes(driverQuery);
-                return matchCarga || matchDriver;
-            });
-
-            if (foundList.length === 0) {
-                container.classList.remove('hidden');
-                container.innerHTML = `<div class="bg-white p-4 rounded-xl border border-rose-200 text-center text-xs text-rose-600 font-semibold">Nenhuma carga ativa encontrada com esses critérios.</div>`;
-                return;
-            }
-
-            container.classList.remove('hidden');
-            let htmlContent = `
-                <div class="bg-purple-50 p-4 rounded-2xl border border-purple-200 space-y-3">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-purple-800 uppercase tracking-wider"><i class="fa-solid fa-magnifying-glass mr-1"></i> Resultados Encontrados (${foundList.length})</span>
-                        <button onclick="document.getElementById('repSearchResultContainer').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-            `;
-
-            foundList.forEach(found => {
-                htmlContent += `
-                    <div class="bg-white p-3 rounded-xl border border-purple-100 flex items-center justify-between gap-2">
-                        <div>
-                            <p class="font-bold text-slate-800 text-sm">${found.numeroCarga ? 'Carga: ' + found.numeroCarga : 'Carga sem número'} • Motorista: ${found.driverName}</p>
-                            <p class="text-xs text-slate-500">Deseja acompanhar essa carga?</p>
-                        </div>
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="adicionarAcompanhamentoRep('${found.id}')" class="px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-bold shadow flex items-center gap-1" title="Sim, acompanhar">
-                                <i class="fa-solid fa-check"></i> Sim
-                            </button>
-                            <button onclick="this.closest('.bg-white').remove()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold" title="Cancelar / X">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-
-            htmlContent += `</div>`;
-            container.innerHTML = htmlContent;
-        };
-
-        window.adicionarAcompanhamentoRep = (routeId) => {
-            let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
-            if (!tracked.includes(routeId)) {
-                tracked.push(routeId);
-                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
-            }
-            document.getElementById('repSearchResultContainer').classList.add('hidden');
-            document.getElementById('searchRepCargoInput').value = '';
-            document.getElementById('searchRepDriverInput').value = '';
-            showToast("Carga adicionada aos seus acompanhamentos!", "success");
-            renderRepDashboard();
-        };
-
-        window.deixarDeAcompanharRep = (routeId) => {
-            window.pedirConfirmacao("Deixar de Acompanhar", "Tem certeza que deseja remover esta carga do seu painel?", () => {
-                let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
-                tracked = tracked.filter(id => id !== routeId);
-                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
-                showToast("Carga removida do acompanhamento.", "success");
-                renderRepDashboard();
-            });
-        };
-
-        function renderRepDashboard() {
-            let trackedIds = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
-            
-            let myRoutes = allRoutes.filter(r => {
-                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
-                if (repCurrentTab === 'ativas') {
-                    return isTracked && r.status === 'active';
-                } else {
-                    return isTracked && r.status === 'archived';
-                }
-            }).sort((a,b) => b.createdAt - a.createdAt);
-
-            const allMyTrackedActive = allRoutes.filter(r => {
-                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
-                return isTracked && r.status === 'active';
-            });
-
-            let totalCidadesItinerario = 0;
-            let totalEntregasConcluidasRep = 0;
-            let totalEntregasGeralRep = 0;
-            let countEmAndamento = allMyTrackedActive.length;
-            let countProximasConclusao = 0;
-
-            allMyTrackedActive.forEach(r => {
-                if (r.stops && r.stops.length > 2) {
-                    const entregas = r.stops.slice(1, -1);
-                    totalCidadesItinerario += entregas.length;
-                    const concluidas = entregas.filter(s => s.concluido).length;
-                    totalEntregasConcluidasRep += concluidas;
-                    totalEntregasGeralRep += entregas.length;
-
-                    const pct = entregas.length > 0 ? (concluidas / entregas.length) : 0;
-                    if (pct >= 0.7 && concluidas < entregas.length) {
-                        countProximasConclusao++;
-                    }
-                }
-            });
-
-            const taxaConclusaoGeral = totalEntregasGeralRep > 0 ? Math.round((totalEntregasConcluidasRep / totalEntregasGeralRep) * 100) : 0;
-
-            document.getElementById('repMetricActive').innerText = allMyTrackedActive.length;
-            document.getElementById('repMetricCities').innerText = totalCidadesItinerario;
-            document.getElementById('repMetricRate').innerText = `${taxaConclusaoGeral}%`;
-            document.getElementById('repStatusAndamento').innerText = countEmAndamento;
-            document.getElementById('repStatusProximas').innerText = countProximasConclusao;
-
-            const noRoutesDiv = document.getElementById('repNoRoutes');
-            const activeRoutesList = document.getElementById('repActiveRoutesList');
-
-            if (myRoutes.length === 0) {
-                noRoutesDiv.classList.remove('hidden');
-                activeRoutesList.innerHTML = '';
-                return;
-            }
-
-            noRoutesDiv.classList.add('hidden');
-            activeRoutesList.innerHTML = '';
-
-            myRoutes.forEach(route => {
-                const entregas = route.stops.slice(1, -1);
-                const totalCidades = entregas.length;
-                const concluidasCidades = entregas.filter(s => s.concluido).length;
-
-                let mapsHref = "https://www.google.com/maps";
-                if (route.rawUrl && route.rawUrl.trim() !== '') {
-                    let link = route.rawUrl.trim();
-                    mapsHref = (link.startsWith('http://') || link.startsWith('https://')) ? link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
-                }
-
-                const card = document.createElement('div');
-                card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4";
-
-                card.innerHTML = `
-                    <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <h3 class="font-bold text-slate-800 text-base">
-                                    ${route.numeroCarga ? `Carga: ${route.numeroCarga}` : 'Carga sem número'}
-                                </h3>
-                                <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-100">
-                                    <i class="fa-solid fa-truck mr-1"></i>Motorista: ${route.driverName}
-                                </span>
-                            </div>
-                            <p class="text-xs text-slate-400">Início: ${formatarDataHora(route.startedAt || route.createdAt)}</p>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <span class="${route.status === 'archived' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'} text-xs font-bold px-3 py-1.5 rounded-full shrink-0">
-                                ${route.status === 'archived' ? 'Concluída' : `Cidades: ${concluidasCidades}/${totalCidades}`}
-                            </span>
-                            <button onclick="deixarDeAcompanharRep('${route.id}')" class="text-slate-400 hover:text-rose-600 p-1.5" title="Deixar de acompanhar">
-                                <i class="fa-solid fa-xmark text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <button onclick="visualizarRotaAdmin('${route.id}')" class="w-full py-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-purple-200">
-                            <i class="fa-solid fa-eye"></i> Visualizar Rota
-                        </button>
-                        <a href="${mapsHref}" target="_blank" class="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-emerald-200">
-                            <i class="fa-solid fa-map-location-dot"></i> Ver no Maps
-                        </a>
-                    </div>
-                `;
-
-                activeRoutesList.appendChild(card);
-            });
-        }
-
         window.toggleStopStatus = async (routeId, stopIndex, currentStatus) => {
             const route = allRoutes.find(r => r.id === routeId);
             if (!route) return;
@@ -2859,6 +2931,324 @@
                 enviarNotificacaoLocal("Parada Concluída!", `${route.driverName} concluiu: ${stopName}`);
             }
         };
+
+
+        // ---------------------------------------------------------------------------------
+        // TODO: BLOCO 7.4-3: ALTERNÂNCIA DE ABAS E GESTÃO DE ACOMPANHAMENTO (REPRESENTANTE)
+        // ---------------------------------------------------------------------------------
+        window.alternarAbaRepresentante = (tab, direction = 'none') => {
+            repCurrentTab = tab;
+
+            const secInicio = document.getElementById('repSectionInicio');
+            const secAtivas = document.getElementById('repSectionAtivas');
+            const secConcluidas = document.getElementById('repSectionConcluidas');
+
+            const secoes = { 'inicio': secInicio, 'ativas': secAtivas, 'concluidas': secConcluidas };
+
+            // Aplicação da animação fluida estilo WhatsApp nas abas mobile
+            if (window.innerWidth < 640) {
+                Object.keys(secoes).forEach(key => {
+                    const el = secoes[key];
+                    if (!el) return;
+
+                    if (key === tab) {
+                        el.classList.remove('hidden');
+                        el.classList.add('tab-pane-transition');
+
+                        if (direction === 'left') {
+                            el.style.transform = 'translateX(25px)';
+                            el.style.opacity = '0';
+                        } else if (direction === 'right') {
+                            el.style.transform = 'translateX(-25px)';
+                            el.style.opacity = '0';
+                        } else {
+                            el.style.transform = 'translateX(0)';
+                            el.style.opacity = '1';
+                        }
+
+                        setTimeout(() => {
+                            el.style.transform = 'translateX(0)';
+                            el.style.opacity = '1';
+                        }, 10);
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                });
+            } else {
+                // Comportamento fixo padrão para desktop
+                if (secInicio) secInicio.classList.toggle('hidden', tab !== 'inicio');
+                if (secAtivas) secAtivas.classList.toggle('hidden', tab !== 'ativas');
+                if (secConcluidas) secConcluidas.classList.toggle('hidden', tab !== 'concluidas');
+            }
+
+            const btnDInicio = document.getElementById('repTabHeaderInicio');
+            const btnDAtivas = document.getElementById('repTabHeaderAtivas');
+            const btnDConcluidas = document.getElementById('repTabHeaderConcluidas');
+
+            [btnDInicio, btnDAtivas, btnDConcluidas].forEach(b => {
+                if (b) b.className = "flex-1 min-w-[120px] py-4 px-4 text-center text-slate-500 transition-all hover:bg-slate-50 flex items-center justify-center gap-2";
+            });
+
+            const btnMInicio = document.getElementById('mobileRepTabInicio');
+            const btnMAtivas = document.getElementById('mobileRepTabAtivas');
+            const btnMConcluidas = document.getElementById('mobileRepTabConcluidas');
+
+            [btnMInicio, btnMAtivas, btnMConcluidas].forEach(b => {
+                if (b) b.className = "flex flex-col items-center gap-1.5 text-[11px] font-medium text-slate-400";
+            });
+
+            if (tab === 'inicio') {
+                if (btnDInicio) btnDInicio.className = "flex-1 min-w-[120px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
+                if (btnMInicio) btnMInicio.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600 bottom-nav-active";
+            } else if (tab === 'ativas') {
+                if (btnDAtivas) btnDAtivas.className = "flex-1 min-w-[160px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
+                if (btnMAtivas) btnMAtivas.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600 bottom-nav-active";
+            } else if (tab === 'concluidas') {
+                if (btnDConcluidas) btnDConcluidas.className = "flex-1 min-w-[160px] py-4 px-4 text-center tab-active flex items-center justify-center gap-2 transition-all";
+                if (btnMConcluidas) btnMConcluidas.className = "flex flex-col items-center gap-1.5 text-[11px] font-bold text-purple-600 bottom-nav-active";
+            }
+
+            renderRepDashboard();
+        };
+
+        window.adicionarAcompanhamentoRep = (routeId) => {
+            let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+            if (!tracked.includes(routeId)) {
+                tracked.push(routeId);
+                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
+            }
+            showToast("Carga adicionada aos seus acompanhamentos!", "success");
+            renderRepDashboard();
+        };
+
+        window.deixarDeAcompanharRep = (routeId) => {
+            window.pedirConfirmacao("Deixar de Acompanhar", "Tem certeza que deseja remover esta carga do seu painel?", () => {
+                let tracked = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+                tracked = tracked.filter(id => id !== routeId);
+                localStorage.setItem(`app_rep_tracked_${currentRepId}`, JSON.stringify(tracked));
+                showToast("Carga removida do acompanhamento.", "success");
+                renderRepDashboard();
+            });
+        };
+
+        window.filtrarCargasAtivasRep = () => {
+            renderRepDashboard();
+        };
+
+        window.filtrarCargasConcluidasRep = () => {
+            renderRepDashboard();
+        };
+
+
+        // --------------------------------------------------------
+        // TODO: BLOCO 7.4-4: DASHBOARD E MÉTRICAS DO REPRESENTANTE
+        // --------------------------------------------------------
+        function renderRepDashboard() {
+            let trackedIds = JSON.parse(localStorage.getItem(`app_rep_tracked_${currentRepId}`) || "[]");
+            
+            const allMyTrackedActive = allRoutes.filter(r => {
+                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
+                return isTracked && r.status === 'active';
+            });
+
+            const allMyTrackedArchived = allRoutes.filter(r => {
+                const isTracked = trackedIds.includes(r.id) || r.repId === currentRepId || (r.representantes || []).some(x => x.id === currentRepId);
+                return isTracked && r.status === 'archived';
+            });
+
+            let totalCidadesItinerario = 0;
+            let totalEntregasConcluidasRep = 0;
+            let totalEntregasGeralRep = 0;
+            let countEmAndamento = allMyTrackedActive.length;
+            let countProximasConclusao = 0;
+
+            allMyTrackedActive.forEach(r => {
+                if (r.stops && r.stops.length > 2) {
+                    const entregas = r.stops.slice(1, -1);
+                    totalCidadesItinerario += entregas.length;
+                    const concluidas = entregas.filter(s => s.concluido).length;
+                    totalEntregasConcluidasRep += concluidas;
+                    totalEntregasGeralRep += entregas.length;
+
+                    const pct = entregas.length > 0 ? (concluidas / entregas.length) : 0;
+                    if (pct >= 0.7 && concluidas < entregas.length) {
+                        countProximasConclusao++;
+                    }
+                }
+            });
+
+            const taxaConclusaoGeral = totalEntregasGeralRep > 0 ? Math.round((totalEntregasConcluidasRep / totalEntregasGeralRep) * 100) : 0;
+
+            document.getElementById('repMetricActive').innerText = allMyTrackedActive.length;
+            document.getElementById('repMetricCities').innerText = totalCidadesItinerario;
+            document.getElementById('repMetricRate').innerText = `${taxaConclusaoGeral}%`;
+            document.getElementById('repStatusAndamento').innerText = countEmAndamento;
+            document.getElementById('repStatusProximas').innerText = countProximasConclusao;
+
+            const noRoutesDiv = document.getElementById('repNoRoutes');
+
+            const inicioList = document.getElementById('repInicioActiveList');
+            if (inicioList) {
+                inicioList.innerHTML = '';
+                if (allMyTrackedActive.length === 0) {
+                    inicioList.innerHTML = `<p class="text-xs text-slate-500 italic p-3 text-center bg-white rounded-xl border border-slate-200">Nenhuma carga em andamento no momento.</p>`;
+                } else {
+                    allMyTrackedActive.slice(0, 3).forEach(route => {
+                        inicioList.appendChild(criarCardCargaInicioRep(route));
+                    });
+                }
+            }
+
+            const activeList = document.getElementById('repActiveRoutesList');
+            const searchActiveTerm = (document.getElementById('searchRepUnifiedActiveInput')?.value || '').toLowerCase().trim();
+            if (activeList) {
+                activeList.innerHTML = '';
+                let listActiveToRender = allMyTrackedActive;
+
+                if (searchActiveTerm) {
+                    listActiveToRender = listActiveToRender.filter(r => {
+                        const matchCarga = (r.numeroCarga || '').toLowerCase().includes(searchActiveTerm);
+                        const matchDriver = (r.driverName || '').toLowerCase().includes(searchActiveTerm);
+                        const matchTitle = (r.titulo || r.nomeCarga || '').toLowerCase().includes(searchActiveTerm);
+                        return matchCarga || matchDriver || matchTitle;
+                    });
+                }
+
+                if (listActiveToRender.length === 0) {
+                    activeList.innerHTML = `<p class="text-xs text-slate-500 italic p-4 text-center bg-white rounded-xl border border-slate-200">Nenhuma carga em andamento encontrada.</p>`;
+                } else {
+                    listActiveToRender.forEach(route => {
+                        activeList.appendChild(criarCardCargaRep(route));
+                    });
+                }
+            }
+
+            const archivedList = document.getElementById('repArchivedRoutesList');
+            const searchArchivedTerm = (document.getElementById('searchRepUnifiedArchivedInput')?.value || '').toLowerCase().trim();
+            if (archivedList) {
+                archivedList.innerHTML = '';
+                let listArchivedToRender = allMyTrackedArchived;
+
+                if (searchArchivedTerm) {
+                    listArchivedToRender = listArchivedToRender.filter(r => {
+                        const matchCarga = (r.numeroCarga || '').toLowerCase().includes(searchArchivedTerm);
+                        const matchDriver = (r.driverName || '').toLowerCase().includes(searchArchivedTerm);
+                        const matchTitle = (r.titulo || r.nomeCarga || '').toLowerCase().includes(searchArchivedTerm);
+                        return matchCarga || matchDriver || matchTitle;
+                    });
+                }
+
+                if (listArchivedToRender.length === 0) {
+                    archivedList.innerHTML = `<p class="text-xs text-slate-500 italic p-4 text-center bg-white rounded-xl border border-slate-200">Nenhuma carga concluída encontrada no histórico.</p>`;
+                } else {
+                    listArchivedToRender.forEach(route => {
+                        archivedList.appendChild(criarCardCargaRep(route));
+                    });
+                }
+            }
+
+            if (noRoutesDiv) noRoutesDiv.classList.add('hidden');
+        }
+
+
+        // -----------------------------------------------------------------
+        // TODO: BLOCO 7.4-5: CRIAÇÃO DE CARDS DE CARGA PARA O REPRESENTANTE
+        // -----------------------------------------------------------------
+        function criarCardCargaInicioRep(route) {
+            const stops = route.stops || [];
+            const entregas = stops.slice(1, -1);
+            const totalCidades = entregas.length;
+            const concluidasCidades = entregas.filter(s => s.concluido).length;
+            const percent = totalCidades > 0 ? Math.round((concluidasCidades / totalCidades) * 100) : 0;
+
+            const completedStops = stops.filter(s => s.concluido);
+            const lastCompleted = completedStops.length > 0 ? (completedStops[completedStops.length - 1].texto || 'Início') : 'Nenhuma realizada';
+            
+            const pendingStops = stops.filter(s => !s.concluido);
+            const nextPending = pendingStops.length > 0 ? (pendingStops[0].texto || 'Destino') : 'Todas concluídas';
+
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3";
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
+                    <div class="space-y-1 min-w-0 flex-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-bold text-slate-800 text-sm truncate">
+                                ${route.numeroCarga ? `Carga: ${route.numeroCarga}` : (route.titulo || 'Carga sem número')}
+                            </h3>
+                            <span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-md border border-emerald-100 truncate">
+                                <i class="fa-solid fa-truck mr-1"></i>${route.driverName || 'Motorista'}
+                            </span>
+                        </div>
+                    </div>
+                    <span class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2.5 py-1 rounded-full shrink-0">
+                        ${concluidasCidades}/${totalCidades} (${percent}%)
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-0.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Última Realizada</span>
+                        <p class="font-semibold text-slate-700 truncate"><i class="fa-solid fa-check text-emerald-600 mr-1.5 text-[10px]"></i>${lastCompleted}</p>
+                    </div>
+                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-0.5">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Próxima Parada</span>
+                        <p class="font-semibold text-purple-700 truncate"><i class="fa-solid fa-clock text-amber-500 mr-1.5 text-[10px]"></i>${nextPending}</p>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        function criarCardCargaRep(route) {
+            const entregas = route.stops.slice(1, -1);
+            const totalCidades = entregas.length;
+            const concluidasCidades = entregas.filter(s => s.concluido).length;
+
+            let mapsHref = "https://www.google.com/maps";
+            if (route.rawUrl && route.rawUrl.trim() !== '') {
+                let link = route.rawUrl.trim();
+                mapsHref = (link.startsWith('http://') || link.startsWith('https://')) ? link : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(link)}`;
+            }
+
+            const card = document.createElement('div');
+            card.className = "bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4";
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 class="font-bold text-slate-800 text-base">
+                                ${route.numeroCarga ? `Carga: ${route.numeroCarga}` : (route.titulo || 'Carga sem número')}
+                            </h3>
+                            <span class="bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-md border border-emerald-100">
+                                <i class="fa-solid fa-truck mr-1"></i>Motorista: ${route.driverName}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">Início: ${formatarDataHora(route.startedAt || route.createdAt)}</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="${route.status === 'archived' ? 'bg-emerald-100 text-emerald-800' : 'bg-purple-100 text-purple-800'} text-xs font-bold px-3 py-1.5 rounded-full shrink-0">
+                            ${route.status === 'archived' ? 'Concluída' : `Cidades: ${concluidasCidades}/${totalCidades}`}
+                        </span>
+                        <button onclick="deixarDeAcompanharRep('${route.id}')" class="text-slate-400 hover:text-rose-600 p-1.5" title="Deixar de acompanhar">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2.5">
+                    <button onclick="visualizarRotaAdmin('${route.id}')" class="w-full py-3 bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-purple-200">
+                        <i class="fa-solid fa-eye"></i> Visualizar Rota
+                    </button>
+                    <a href="${mapsHref}" target="_blank" class="w-full py-3 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-2 border border-emerald-200">
+                        <i class="fa-solid fa-map-location-dot"></i> Ver no Maps
+                    </a>
+                </div>
+            `;
+            return card;
+        }
 
         // =======================================================
         // TODO: BLOCO 7.5: UTILITÁRIOS, LISTENERS E INICIALIZAÇÃO
