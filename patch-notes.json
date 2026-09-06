@@ -1,10 +1,23 @@
 {
-  "currentVersion": "v1.1.5",
+  "currentVersion": "v1.2.0",
   "patches": [
+    {
+      "id": "patch-120",
+      "version": "v1.2.0",
+      "badge": "Novo",
+      "title": "Sessão Persistente, Suporte Direct WhatsApp e Badge Simplificado",
+      "details": [
+        "<strong>Sessão Persistente Indefinida:</strong> O usuário permanece logado no app após fechar a aba ou navegador, pulando o login no próximo acesso até que o logout seja solicitado manualmente.",
+        "<strong>Suporte via WhatsApp na Tela Inicial:</strong> Botão de suporte direto no WhatsApp (<code>73 99180-0487</code>) com a mensagem automática <em>\"Preciso de ajuda com o sistema\"</em>.",
+        "<strong>Recuperação de Senha no Login:</strong> Opção \"Esqueci minha senha\" na tela de login unificada redirecionando direto ao WhatsApp com a mensagem pronta <em>\"Esqueci minha senha\"</em>.",
+        "<strong>Indicador de Conexão Simplificado:</strong> Badge compacto no topo da capa com bolinha de status indicando de forma limpa apenas <strong>Online</strong> ou <strong>Offline</strong>.",
+        "<strong>Injeção Automática de Versão:</strong> Sincronização automática do número da versão (<code>CURRENT_VERSION</code>) na Splash Screen, Login, Capa e Modal de Configurações sem necessidade de edição no HTML."
+      ]
+    },
     {
       "id": "patch-115",
       "version": "v1.1.5",
-      "badge": "Novo",
+      "badge": "",
       "title": "Atualização Completa e Reforma do Painel de Representantes",
       "details": [
         "<strong>Atualização do Sistema:</strong> O ecossistema completo foi atualizado para englobar todas as mudanças estruturais e visuais do aplicativo.",

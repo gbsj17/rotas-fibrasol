@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Logística Fibrasol v1.1.4</title>
+    <title>Logística Fibrasol</title>
 
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -101,7 +101,7 @@
         </div>
         <div class="flex items-center gap-2.5 text-xs text-slate-300 bg-white/10 px-4 py-2 rounded-full border border-white/15 backdrop-blur-sm">
             <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
-            <span class="font-medium">Carregando versão 1.1.4... </span>
+            <span class="font-medium">Carregando versão <span class="app-version-text">v1.1.5</span>...</span>
         </div>
     </div>
 
@@ -141,106 +141,18 @@
                     <button onclick="alternarPatchNotesBox()" class="w-full flex items-center justify-between p-3.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors text-left">
                         <div class="flex items-center space-x-3">
                             <i class="fa-solid fa-file-code text-slate-500"></i>
-                            <span class="text-sm font-medium text-slate-700">Notas da Versão (<span class="app-version-text">v1.1.5</span>)</span>
+                            <span class="text-sm font-medium text-slate-700">Notas da Versão (<span class="app-version-text">v1.2.0</span>)</span>
                         </div>
                         <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
                     </button>
 
+                    <!-- CAIXA AUTOMÁTICA DE NOTAS DA VERSÃO -->
                     <div id="patchNotesBox" class="hidden bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 max-h-[50vh] overflow-y-auto screen-android-animate">
-                        <h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões (<span class="app-version-text">v1.1.5</span>)</h4>
+                        <h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões (<span class="app-version-text">v1.2.0</span>)</h4>
                         
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-115')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-[#152e50] flex items-center gap-2">
-                                    <i class="fa-solid fa-box-open text-slate-400"></i> v1.1.5 
-                                    <span class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">Novo</span>
-                                </span>
-                                <i id="icon-patch-115" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-115" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Navegação de Representantes:</strong> Redesenho completo com 3 abas dedicadas: Início (Métricas), Cargas em Andamento e Cargas Concluídas.</li>
-                                    <li><strong>Interface Responsiva Híbrida:</strong> Menu superior no Desktop e barra inferior fixa no Mobile.</li>
-                                    <li><strong>Cards Informativos na Tela Inicial:</strong> Exibição estática de número da carga, motorista, última parada concluída e próxima pendente.</li>
-                                    <li><strong>Isolamento de Ações:</strong> Botões interativos concentrados exclusivamente na aba de Cargas em Andamento.</li>
-                                    <li><strong>Busca Unificada:</strong> Campo de pesquisa inteligente para Título, Nº da Carga ou Motorista.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-114')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.4 
-                                </span>
-                                <i id="icon-patch-114" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-114" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Layout e Navegação Fixa:</strong> Cabeçalho e rodapé fixos com rolagem independente otimizada para mobile.</li>
-                                    <li><strong>Padronização Visual:</strong> Altura e respiro de topo unificados em todas as abas do painel administrador.</li>
-                                    <li><strong>Identidade Representantes:</strong> Dinamismo visual com o tema roxo corporativo (`purple-600`) na aba de Reps.</li>
-                                    <li><strong>Acessibilidade Mobile:</strong> Ajuste de tamanhos de fontes e inputs para evitar zoom automático em dispositivos iOS.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-113')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.3 
-                                </span>
-                                <i id="icon-patch-113" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-113" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Modal Interativo:</strong> Mini-cards expansíveis (accordion) para visualização organizada das versões.</li>
-                                    <li><strong>Navegação de Histórico:</strong> Clicar em cada versão expande e mostra os detalhes das atualizações.</li>
-                                    <li><strong>Interface Otimizada:</strong> Redução de poluição visual dentro das opções do sistema.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-112')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.2</span>
-                                <i id="icon-patch-112" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-112" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Navegação Mobile Inferior:</strong> Barra de navegação fixa na parte inferior do celular (estilo app nativo).</li>
-                                    <li><strong>Layout Híbrido Responsivo:</strong> Barra superior mantida no Desktop/Web e navegação embutida para mobile.</li>
-                                    <li><strong>Rolagem Contínua:</strong> Ajuste de margens e padding para o conteúdo rolar por trás dos menus fixos.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-111')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.1</span>
-                                <i id="icon-patch-111" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-111" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Autocompletar de Motoristas:</strong> Busca dinâmica nos logins e pesquisa de representantes.</li>
-                                    <li><strong>Ranking de Cidades:</strong> Novo painel analítico com gráfico das cidades de maior demanda.</li>
-                                    <li><strong>Status Firebase:</strong> Indicador em tempo real restaurado no cabeçalho.</li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-                            <button onclick="togglePatch('patch-110')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
-                                <span class="text-xs font-bold text-slate-700 flex items-center gap-2"><i class="fa-solid fa-box-archive text-slate-400"></i> v1.1.0</span>
-                                <i id="icon-patch-110" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="patch-110" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    <li><strong>Múltiplos Representantes:</strong> Vincular mais de um representante a uma mesma carga.</li>
-                                    <li><strong>Métricas Reps:</strong> Novo painel com total de ativas, cidades e % de conclusão.</li>
-                                    <li><strong>Visualização de Rota:</strong> Modal com todos os detalhes e progresso real das paradas.</li>
-                                </ul>
-                            </div>
+                        <!-- O JavaScript lerá o patch-notes.json e injetará os itens aqui -->
+                        <div id="patchNotesDynamicContainer" class="space-y-2">
+                            <p class="text-xs text-slate-400 p-2 text-center">Carregando histórico de notas...</p>
                         </div>
                     </div>
 
@@ -431,120 +343,135 @@
         <!-- ========================================== -->
         <!-- TODO: Bloco 3 Tela de Login & Perfil       -->
         <!-- ========================================== -->
- <div id="screenRoleSelection" class="min-h-full flex flex-col items-center justify-center p-6 bg-gradient-to-b from-slate-100 to-slate-200 relative pb-28 screen-android-animate">
-        <div class="absolute bottom-4 left-4 z-40 hidden sm:flex items-center gap-2 bg-[#152e50] px-4 py-2.5 rounded-full shadow-lg border border-slate-800 text-xs font-medium text-white">
-            <span id="webConnectionBadgeDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
-            <span id="webConnectionBadgeText">Conectando...</span>
-        </div>
+        <!-- TELA INICIAL (CAPA COM VISUAL NOVO) -->
+        <div id="screenInitial" class="min-h-full flex flex-col items-center justify-center p-4 sm:p-6 bg-[#f8faf8] relative pb-28 screen-android-animate">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex flex-col justify-between min-h-[540px]">
+                
+                <!-- Topo: Status de Conexão, Alerta de Atualização e Configurações -->
+                <div class="flex items-center justify-between gap-2">
+                    <!-- Status da Conexão (Canto Superior Esquerdo) -->
+                    <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-[11px] font-bold text-slate-700 shadow-sm">
+                        <span id="webConnectionBadgeDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                        <span id="webConnectionBadgeText">Conectando...</span>
+                    </div>
 
-        <div class="absolute top-4 right-4 z-40">
-            <button onclick="abrirModalConfig()" class="relative p-2.5 rounded-xl bg-white shadow hover:bg-slate-50 transition-colors text-[#152e50] border border-slate-200 flex items-center justify-center">
-                <i class="fa-solid fa-gear text-lg"></i>
-                <span class="patch-badge-notice absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
-            </button>
-        </div>
+                    <!-- Lado Direito: Botão de Atualização (Compacto/Expandido) + Configurações -->
+                    <div class="flex items-center gap-2">
+                        <button id="btnPwaUpdateNotice" onclick="forcarAtualizacaoPwa()" class="w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[#152e50] flex items-center justify-center transition-all duration-300 active:scale-95 shadow-sm" title="Verificar / Forçar Atualização">
+                            <i id="iconPwaUpdate" class="fa-solid fa-rotate text-sm transition-transform"></i>
+                            <span id="textPwaUpdate" class="hidden text-xs font-bold text-slate-900 ml-1.5 whitespace-nowrap">Atualização disponível</span>
+                        </button>
 
-        <div class="w-full max-w-sm space-y-6 text-center">
-            <div class="space-y-3">
-                <div class="w-20 h-20 rounded-3xl bg-[#152e50] mx-auto shadow-2xl shadow-[#152e50]/20 flex items-center justify-center p-4 relative overflow-hidden border border-[#152e50]/40">
-                    <div class="absolute inset-0 bg-gradient-to-tr from-black/20 to-transparent"></div>
-                    <i class="fa-solid fa-map-location-dot text-3xl text-white relative z-10 drop-shadow"></i>
-                </div>
-                <h1 class="text-3xl font-extrabold text-[#152e50] tracking-tight font-handel">LOGÍSTICA FIBRASOL</h1>
-                <p class="text-xs text-slate-500 font-medium">Selecione seu perfil para acessar o sistema</p>
-            </div>
-
-            <div class="space-y-3">
-                <button onclick="selecionarPerfil('driver')" class="w-full bg-white hover:bg-emerald-50/50 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
-                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white flex items-center justify-center text-lg transition-colors">
-                        <i class="fa-solid fa-truck"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800">Motorista</p>
-                        <p class="text-xs text-slate-500">Visualizar e concluir paradas</p>
-                    </div>
-                </button>
-
-                <button onclick="selecionarPerfil('representative')" class="w-full bg-white hover:bg-purple-50/50 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
-                    <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 group-hover:bg-purple-600 group-hover:text-white flex items-center justify-center text-lg transition-colors">
-                        <i class="fa-solid fa-briefcase"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800">Representante</p>
-                        <p class="text-xs text-slate-500">Acompanhar cargas e itinerários</p>
-                    </div>
-                </button>
-
-                <button onclick="selecionarPerfil('admin')" class="w-full bg-white hover:bg-slate-100 border border-slate-200 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center gap-4 text-left group">
-                    <div class="w-12 h-12 rounded-xl bg-slate-100 text-[#152e50] group-hover:bg-[#152e50] group-hover:text-white flex items-center justify-center text-lg transition-colors">
-                        <i class="fa-solid fa-user-gear"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold text-slate-800">Administrador</p>
-                        <p class="text-xs text-slate-500">Gestão de rotas e equipe</p>
-                    </div>
-                </button>
-            </div>
-            <p class="text-[11px] text-slate-400">gbsj17 v1.1.4 • Sincronização em Tempo Real</p>
-        </div>
-
-        <div id="mobileInstallCard" class="block md:hidden fixed bottom-4 left-4 right-4 z-30 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-slate-200/80">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-[#152e50] text-white flex items-center justify-center text-lg shrink-0 shadow-md">
-                        <i class="fa-solid fa-download"></i>
-                    </div>
-                    <div>
-                        <p class="text-xs font-bold text-slate-800">Instalar o aplicativo</p>
-                        <p class="text-[11px] text-slate-500">Acesso rápido na tela inicial</p>
+                        <button onclick="abrirModalConfig()" class="relative w-10 h-10 rounded-xl bg-slate-50 hover:bg-slate-100 active:scale-95 border border-slate-200 text-[#152e50] flex items-center justify-center transition-all">
+                            <i class="fa-solid fa-gear text-sm"></i>
+                            <span class="patch-badge-notice absolute -top-1 -right-1 w-3.5 h-3.5 bg-rose-600 rounded-full border-2 border-white animate-pulse"></span>
+                        </button>
                     </div>
                 </div>
-                <div class="flex items-center gap-1.5 shrink-0">
-                    <button onclick="installPwa()" class="px-3.5 py-2 bg-[#152e50] text-white font-bold rounded-xl text-xs shadow hover:bg-[#0f223d]">Instalar</button>
-                    <button onclick="abrirGuiaInstalacaoPwa()" class="p-2 text-slate-400 hover:text-slate-600" title="Ajuda"><i class="fa-solid fa-circle-question text-base"></i></button>
+
+                <!-- Centro: Logo e Descrição -->
+                <div class="text-center space-y-4 my-auto py-6">
+                    <div class="w-20 h-20 bg-[#152e50] text-[#fac043] rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-[#152e50]/20 text-3xl">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                    <div class="space-y-1">
+                        <h1 class="text-2xl font-black text-[#152e50] tracking-tight font-handel">LOGÍSTICA FIBRASOL</h1>
+                        <p class="text-xs text-slate-500 font-medium">Precisão e controle em cada entrega</p>
+                    </div>
+                </div>
+
+                <!-- Rodapé do Card: Ações -->
+                <div class="space-y-3">
+                    <button onclick="mostrarTelaComAnimacao('screenUnifiedLogin')" class="w-full py-4 bg-[#152e50] hover:bg-[#0f223d] active:scale-[0.98] text-white font-bold rounded-2xl shadow-lg shadow-[#152e50]/25 transition-all text-sm flex items-center justify-center gap-2">
+                        <span>Entrar</span>
+                    </button>
+                    
+                    <!-- Botão de Suporte via WhatsApp -->
+                    <a href="https://wa.me/5573991800487?text=Preciso%20de%20ajuda%20com%20o%20sistema" target="_blank" class="w-full py-3.5 bg-white hover:bg-slate-50 active:scale-[0.98] border border-slate-200 text-slate-700 font-semibold rounded-2xl transition-all text-xs flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-brands fa-whatsapp text-emerald-600 text-base"></i>
+                        <span>Suporte via WhatsApp</span>
+                    </a>
+
+                    <!-- Versão dinâmica -->
+                    <div class="text-center pt-1">
+                        <span class="text-[10px] text-slate-400 font-mono">gbsj17 <span class="app-version-text">v1.1.5</span></span>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="screenLogin" class="hidden min-h-full flex flex-col items-center justify-center p-6 bg-slate-50">
-        <div class="w-full max-w-sm bg-white p-6 rounded-2xl shadow-xl border border-slate-200 space-y-5 screen-android-animate">
-            <button onclick="voltarParaSelecaoPerfil()" id="loginBackBtn" class="text-xs text-slate-600 flex items-center gap-2 font-bold py-2 px-3 bg-slate-100 rounded-xl transition-all w-fit">
-                <i class="fa-solid fa-arrow-left text-sm"></i> Voltar
-            </button>
-            <div class="text-center space-y-1">
-                <h2 id="loginTitle" class="text-xl font-bold text-slate-800">Login</h2>
-                <p id="loginSubtitle" class="text-xs text-slate-500">Insira suas credenciais para continuar</p>
-            </div>
-
-            <form id="formLoginAdmin" onsubmit="realizarLoginAdmin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Usuário Admin</label>
-                    <input type="text" id="adminUser" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Senha</label>
-                    <input type="password" id="adminPass" required class="w-full px-3.5 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#152e50] outline-none text-sm">
-                </div>
-                <button type="submit" class="w-full py-3.5 bg-[#152e50] hover:bg-[#0f223d] text-white font-bold rounded-xl shadow-md transition-all text-sm">Entrar como Admin</button>
-            </form>
-
-            <form id="formLoginPin" onsubmit="realizarLoginPin(event)" class="space-y-4 hidden">
-                <div>
-                    <label id="loginNameLabel" class="block text-xs font-bold text-slate-700 uppercase mb-1">Seu Nome</label>
-                    <div class="relative" id="driverAutocompleteContainer">
-                        <input type="text" id="loginNameInput" required placeholder="Digite seu nome" autocomplete="off" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm bg-white">
-                        <div id="driverSuggestionsDropdown" class="hidden absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-40 overflow-y-auto"></div>
+            <!-- Card PWA de Instalação Mobile -->
+            <div id="mobileInstallCard" class="block md:hidden fixed bottom-4 left-4 right-4 z-30 bg-white/95 backdrop-blur-md p-3.5 rounded-2xl shadow-xl border border-slate-200/80">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#152e50] text-[#fac043] flex items-center justify-center text-lg shrink-0 shadow-md">
+                            <i class="fa-solid fa-download"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs font-bold text-slate-800">Instalar o aplicativo</p>
+                            <p class="text-[11px] text-slate-500">Acesso rápido na tela inicial</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <button onclick="installPwa()" class="px-3.5 py-2 bg-[#152e50] text-white font-bold rounded-xl text-xs shadow hover:bg-[#0f223d]">Instalar</button>
+                        <button onclick="abrirGuiaInstalacaoPwa()" class="p-2 text-slate-400 hover:text-slate-600" title="Ajuda"><i class="fa-solid fa-circle-question text-base"></i></button>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">PIN / Senha</label>
-                    <input type="password" id="loginPinInput" required placeholder="Ex: 1234" class="w-full px-3.5 py-3 rounded-xl border border-slate-300 outline-none text-sm font-mono tracking-widest text-center text-lg">
-                </div>
-                <button type="submit" id="loginSubmitBtn" class="w-full py-3.5 text-white font-bold rounded-xl shadow-md transition-all text-sm">Entrar</button>
-            </form>
+            </div>
         </div>
-    </div>
+
+        <!-- TELA DE LOGIN UNIFICADA -->
+        <div id="screenUnifiedLogin" class="hidden min-h-full flex flex-col items-center justify-center p-4 sm:p-6 bg-[#f8faf8] relative pb-28 screen-android-animate">
+            <div class="w-full max-w-sm bg-white rounded-3xl p-6 shadow-xl border border-slate-100 flex flex-col justify-between min-h-[540px]">
+                
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="mostrarTelaComAnimacao('screenInitial')" class="text-[#152e50] bg-slate-50 hover:bg-slate-100 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-2 transition-colors border border-slate-200">
+                        <i class="fa-solid fa-arrow-left"></i> Voltar
+                    </button>
+                    <div class="w-10 h-10 bg-[#152e50] text-[#fac043] rounded-xl flex items-center justify-center shadow-sm">
+                        <i class="fa-solid fa-truck-fast text-sm"></i>
+                    </div>
+                </div>
+
+                <div class="mb-4 space-y-1">
+                    <h2 class="text-2xl font-black text-[#152e50]">Acesso ao Sistema</h2>
+                    <p class="text-xs text-slate-500 font-medium">Digite suas credenciais para continuar</p>
+                </div>
+
+                <form onsubmit="realizarLoginUnificado(event)" class="space-y-4 flex-1">
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 ml-1">Usuário / Nome</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="unifiedUserInput" required class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#152e50] focus:bg-white outline-none text-sm font-semibold text-slate-700 transition-all placeholder:font-normal" placeholder="Ex: gbsj17">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 ml-1">Senha / PIN</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="password" id="unifiedPinInput" required class="w-full pl-10 pr-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-[#152e50] focus:bg-white outline-none text-sm font-mono tracking-wider transition-all placeholder:font-sans placeholder:tracking-normal" placeholder="••••">
+                        </div>
+                    </div>
+
+                    <div class="pt-4 space-y-3">
+                        <button type="submit" class="w-full py-4 bg-[#152e50] hover:bg-[#0f223d] active:scale-[0.98] text-white font-bold rounded-2xl shadow-lg shadow-[#152e50]/25 transition-all text-sm">
+                            Acessar Painel
+                        </button>
+
+                        <!-- Botão Esqueci Minha Senha (WhatsApp) -->
+                        <a href="https://wa.me/5573991800487?text=Esqueci%20minha%20senha" target="_blank" class="w-full py-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 font-semibold rounded-2xl transition-all text-xs flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-brands fa-whatsapp text-emerald-600 text-base"></i>
+                            <span>Esqueci minha senha</span>
+                        </a>
+                    </div>
+                </form>
+
+                <div class="text-center pt-2">
+                    <span class="text-[10px] text-slate-400 font-mono">gbsj17 <span class="app-version-text">v1.1.5</span></span>
+                </div>
+            </div>
+        </div>
 
         <!-- ========================================== -->
         <!-- TODO: Bloco 4: Painel Administrador        -->
@@ -1081,60 +1008,6 @@
             measurementId: "G-SP7RC3KSL2"
         };
 
-        async function carregarPatchNotesDinamico() {
-            try {
-                const response = await fetch('patch-notes.json');
-                const data = await response.json();
-
-                document.querySelectorAll('.app-version-text').forEach(el => {
-                    el.innerText = data.currentVersion;
-                });
-
-                const container = document.getElementById('patchNotesBox');
-                if (!container) return;
-
-                let htmlContent = `<h4 class="font-bold text-slate-700 text-xs px-1 mb-1">Histórico de Versões (${data.currentVersion})</h4>`;
-
-                data.patches.forEach(patch => {
-                    let bulletsHtml = patch.details.map(item => `<li>${item}</li>`).join('');
-                    htmlContent += `
-                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm mb-2">
-                            <button onclick="togglePatch('${patch.id}')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors cursor-pointer">
-                                <span class="text-xs font-bold ${patch.badge ? 'text-[#152e50]' : 'text-slate-700'} flex items-center gap-2">
-                                    <i class="fa-solid fa-box-open text-slate-400"></i> ${patch.version} 
-                                    ${patch.badge ? `<span class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">${patch.badge}</span>` : ''}
-                                </span>
-                                <i id="icon-${patch.id}" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
-                            </button>
-                            <div id="${patch.id}" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
-                                <ul class="list-disc pl-4 space-y-1.5">
-                                    ${bulletsHtml}
-                                </ul>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                container.innerHTML = htmlContent;
-            } catch (error) {
-                console.error("Erro ao carregar o patch-notes.json:", error);
-            }
-        }
-
-        window.togglePatch = (patchId) => {
-            const patchDiv = document.getElementById(patchId);
-            const icon = document.getElementById('icon-' + patchId);
-            if (patchDiv && icon) {
-                if (patchDiv.classList.contains('hidden')) {
-                    patchDiv.classList.remove('hidden');
-                    icon.classList.add('rotate-180');
-                } else {
-                    patchDiv.classList.add('hidden');
-                    icon.classList.remove('rotate-180');
-                }
-            }
-        };
-
         function solicitarPermissaoNotificacoes() {
             if ("Notification" in window && Notification.permission === "default") {
                 Notification.requestPermission().then(permission => {
@@ -1180,19 +1053,19 @@
             if (dot && text) {
                 if (conectado) {
                     dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]";
-                    text.innerText = "Firebase Conectado";
+                    text.innerText = "Online";
                 } else {
                     dot.className = "w-2.5 h-2.5 rounded-full bg-slate-500";
-                    text.innerText = "Modo Offline (Local)";
+                    text.innerText = "Offline";
                 }
             }
             if (webDot && webText) {
                 if (conectado) {
                     webDot.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]";
-                    webText.innerText = "Firebase Conectado";
+                    webText.innerText = "Online";
                 } else {
                     webDot.className = "w-2.5 h-2.5 rounded-full bg-slate-400";
-                    webText.innerText = "Modo Offline (Local)";
+                    webText.innerText = "Offline";
                 }
             }
             if (adminDot) {
@@ -1286,7 +1159,7 @@
 
         window.fecharGuiaInstalacaoPwa = () => {
             document.getElementById('pwaInstallGuideModal')?.classList.add('hidden');
-        };
+        };   
 
         // ==============================================
         // TODO: BLOCO 7.2: AUTENTICAÇÃO, MODAIS E SESSÃO
@@ -1315,7 +1188,7 @@
             if (currentUserRole || selectedRoleForLogin) {
                 currentUserRole = null;
                 selectedRoleForLogin = null;
-                mostrarTelaComAnimacao('screenRoleSelection');
+                window.mostrarTelaComAnimacao('screenInitial');
                 window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
             } else {
                 window.history.pushState({ page: 'app_fibrasol_root' }, '', window.location.href);
@@ -1364,6 +1237,34 @@
                 window.location.reload(true);
             }
         };
+
+        // Monitora o Service Worker e ativa a animação de atualização pendente
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.ready.then(registration => {
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                ativarModoAtualizacaoDisponivel();
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function ativarModoAtualizacaoDisponivel() {
+            const btn = document.getElementById('btnPwaUpdateNotice');
+            const text = document.getElementById('textPwaUpdate');
+            const icon = document.getElementById('iconPwaUpdate');
+
+            if (btn && text && icon) {
+                btn.className = "bg-[#fac043] hover:brightness-95 active:scale-95 text-slate-900 text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-lg shadow-[#fac043]/30 transition-all duration-300 animate-pulse";
+                text.classList.remove('hidden');
+                icon.classList.add('animate-spin');
+            }
+        }
 
         window.abrirModalTrocaSenhaPessoal = () => {
             if (!currentUserRole) {
@@ -1430,16 +1331,23 @@
             showToast("Senha alterada com sucesso!", "success");
         };
 
-        function esconderTodasTelas() {
-            document.getElementById('screenRoleSelection').classList.add('hidden');
-            document.getElementById('screenLogin').classList.add('hidden');
-            document.getElementById('dashboardAdmin').classList.add('hidden');
-            document.getElementById('dashboardDriver').classList.add('hidden');
-            document.getElementById('dashboardRepresentative').classList.add('hidden');
-        }
+        window.esconderTodasTelas = () => {
+            const telas = [
+                'screenInitial',
+                'screenUnifiedLogin',
+                'dashboardAdmin',
+                'dashboardDriver',
+                'dashboardRepresentative'
+            ];
+            
+            telas.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        };
 
-        function mostrarTelaComAnimacao(idTela) {
-            esconderTodasTelas();
+        window.mostrarTelaComAnimacao = (idTela) => {
+            window.esconderTodasTelas();
             const el = document.getElementById(idTela);
             if (el) {
                 el.classList.remove('hidden');
@@ -1447,156 +1355,50 @@
                 void el.offsetWidth;
                 el.classList.add('screen-android-animate');
             }
-        }
-
-        window.selecionarPerfil = (role) => {
-            selectedRoleForLogin = role;
-            mostrarTelaComAnimacao('screenLogin');
-
-            const title = document.getElementById('loginTitle');
-            const formAdmin = document.getElementById('formLoginAdmin');
-            const formPin = document.getElementById('formLoginPin');
-            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
-            const loginBackBtn = document.getElementById('loginBackBtn');
-            const loginNameInput = document.getElementById('loginNameInput');
-            
-            loginNameInput.value = '';
-            document.getElementById('loginPinInput').value = '';
-
-            if (role === 'admin') {
-                title.innerText = 'Acesso Administrador';
-                formAdmin.classList.remove('hidden');
-                formPin.classList.add('hidden');
-                loginBackBtn.className = "text-xs text-slate-600 hover:text-[#152e50] flex items-center gap-2 font-bold py-2 px-3 bg-slate-100 hover:bg-slate-200 rounded-xl transition-all w-fit";
-            } else if (role === 'driver') {
-                title.innerText = 'Acesso Motorista';
-                formAdmin.classList.add('hidden');
-                formPin.classList.remove('hidden');
-                loginSubmitBtn.className = "w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-all text-sm";
-                loginBackBtn.className = "text-xs text-emerald-700 hover:text-emerald-800 flex items-center gap-2 font-bold py-2 px-3 bg-emerald-50 hover:bg-emerald-100 rounded-xl transition-all w-fit";
-            } else if (role === 'representative') {
-                title.innerText = 'Acesso Representante';
-                formAdmin.classList.add('hidden');
-                formPin.classList.remove('hidden');
-                loginSubmitBtn.className = "w-full py-3.5 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl shadow-md transition-all text-sm";
-                loginBackBtn.className = "text-xs text-purple-700 hover:text-purple-800 flex items-center gap-2 font-bold py-2 px-3 bg-purple-50 hover:bg-purple-100 rounded-xl transition-all w-fit";
-            }
         };
 
-        window.voltarParaSelecaoPerfil = () => {
-            mostrarTelaComAnimacao('screenRoleSelection');
-        };
-
-        window.realizarLoginAdmin = (e) => {
+        window.realizarLoginUnificado = (e) => {
             e.preventDefault();
-            const u = document.getElementById('adminUser').value.trim();
-            const p = document.getElementById('adminPass').value.trim();
+            const typedName = document.getElementById('unifiedUserInput').value.trim().toLowerCase();
+            const typedPin = document.getElementById('unifiedPinInput').value.trim();
 
-            const foundAdmin = allAdmins.find(a => a.name === u && a.pin === p);
-            const legacyUser = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+            if (!typedName || !typedPin) return showToast("Preencha usuário e senha.", "error");
 
-            if (foundAdmin || (u === legacyUser.username && p === legacyUser.password)) {
+            // 1. Tenta identificar como Administrador
+            const legacyAdmin = JSON.parse(localStorage.getItem('app_admin_settings') || '{"username": "gbsj17", "password": "1234"}');
+            const foundAdmin = allAdmins.find(a => (a.name || '').toLowerCase() === typedName && (a.pin || '').toString() === typedPin);
+            if (foundAdmin || (typedName === legacyAdmin.username.toLowerCase() && typedPin === legacyAdmin.password)) {
                 currentUserRole = 'admin';
                 salvarSessao();
                 iniciarPainelAdmin();
-            } else {
-                showToast("Usuário ou senha incorretos", "error");
+                document.getElementById('unifiedPinInput').value = '';
+                return;
             }
+
+            // 2. Tenta identificar como Motorista
+            const foundDriver = allDrivers.find(d => (d.name || '').toLowerCase() === typedName && (d.pin || '').toString() === typedPin);
+            if (foundDriver) {
+                currentUserRole = 'driver';
+                currentDriverId = foundDriver.id;
+                salvarSessao();
+                iniciarPainelMotorista(foundDriver);
+                document.getElementById('unifiedPinInput').value = '';
+                return;
+            }
+
+            // 3. Tenta identificar como Representante
+            const foundRep = allReps.find(r => (r.name || '').toLowerCase() === typedName && (r.pin || '').toString() === typedPin);
+            if (foundRep) {
+                currentUserRole = 'representative';
+                currentRepId = foundRep.id;
+                salvarSessao();
+                iniciarPainelRepresentante(foundRep);
+                document.getElementById('unifiedPinInput').value = '';
+                return;
+            }
+
+            showToast("Usuário ou senha incorretos", "error");
         };
-
-        window.realizarLoginPin = (e) => {
-            e.preventDefault();
-            const typedName = document.getElementById('loginNameInput').value.trim().toLowerCase();
-            const pin = document.getElementById('loginPinInput').value.trim();
-
-            if (!typedName) return showToast("Digite seu nome.", "error");
-
-            if (selectedRoleForLogin === 'driver') {
-                const driver = allDrivers.find(d => (d.name || '').toLowerCase() === typedName);
-                if (driver && driver.pin.toString() === pin) {
-                    currentUserRole = 'driver';
-                    currentDriverId = driver.id;
-                    salvarSessao();
-                    iniciarPainelMotorista(driver);
-                } else {
-                    showToast("Nome ou PIN incorreto", "error");
-                }
-            } else if (selectedRoleForLogin === 'representative') {
-                const rep = allReps.find(r => (r.name || '').toLowerCase() === typedName);
-                if (rep && rep.pin.toString() === pin) {
-                    currentUserRole = 'representative';
-                    currentRepId = rep.id;
-                    salvarSessao();
-                    iniciarPainelRepresentante(rep);
-                } else {
-                    showToast("Nome ou PIN incorreto", "error");
-                }
-            }
-        };
-
-        document.getElementById('loginNameInput')?.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase().trim();
-            const dropdown = document.getElementById('driverSuggestionsDropdown');
-            if (!dropdown) return;
-
-            if (!val || selectedRoleForLogin !== 'driver') {
-                dropdown.classList.add('hidden');
-                dropdown.innerHTML = '';
-                return;
-            }
-
-            const matches = allDrivers.filter(d => d.name.toLowerCase().includes(val));
-            if (matches.length === 0) {
-                dropdown.classList.add('hidden');
-                dropdown.innerHTML = '';
-                return;
-            }
-
-            dropdown.innerHTML = '';
-            matches.forEach(m => {
-                const item = document.createElement('div');
-                item.className = "px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:text-emerald-800 cursor-pointer border-b border-slate-100 last:border-none";
-                item.innerText = m.name;
-                item.onclick = () => {
-                    document.getElementById('loginNameInput').value = m.name;
-                    dropdown.classList.add('hidden');
-                };
-                dropdown.appendChild(item);
-            });
-            dropdown.classList.remove('hidden');
-        });
-
-        document.getElementById('searchRepDriverInput')?.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase().trim();
-            const dropdown = document.getElementById('repDriverSuggestionsDropdown');
-            if (!dropdown) return;
-
-            if (!val) {
-                dropdown.classList.add('hidden');
-                dropdown.innerHTML = '';
-                return;
-            }
-
-            const matches = allDrivers.filter(d => d.name.toLowerCase().includes(val));
-            if (matches.length === 0) {
-                dropdown.classList.add('hidden');
-                dropdown.innerHTML = '';
-                return;
-            }
-
-            dropdown.innerHTML = '';
-            matches.forEach(m => {
-                const item = document.createElement('div');
-                item.className = "px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-purple-50 hover:text-purple-800 cursor-pointer border-b border-slate-100 last:border-none";
-                item.innerText = m.name;
-                item.onclick = () => {
-                    document.getElementById('searchRepDriverInput').value = m.name;
-                    dropdown.classList.add('hidden');
-                };
-                dropdown.appendChild(item);
-            });
-            dropdown.classList.remove('hidden');
-        });
 
         function salvarSessao() {
             localStorage.setItem('app_session', JSON.stringify({
@@ -1618,7 +1420,7 @@
             if(unsubRoutes) unsubRoutes();
             if(unsubAdmins) unsubAdmins();
 
-            mostrarTelaComAnimacao('screenRoleSelection');
+            window.mostrarTelaComAnimacao('screenInitial');
             showToast("Sessão encerrada com sucesso");
         };
 
@@ -3253,6 +3055,65 @@
         // =======================================================
         // TODO: BLOCO 7.5: UTILITÁRIOS, LISTENERS E INICIALIZAÇÃO
         // =======================================================
+
+        // 1. Função blindada para buscar e renderizar o patch-notes.json dinamicamente sem travar o app
+        async function carregarPatchNotesDinamico() {
+            const container = document.getElementById('patchNotesDynamicContainer');
+            if (!container) return;
+
+            try {
+                const response = await fetch('patch-notes.json?v=' + Date.now());
+                if (!response.ok) throw new Error("Erro ao carregar arquivo de notas");
+                
+                const data = await response.json();
+                let html = '';
+
+                (data.patches || []).forEach(patch => {
+                    const isNovo = patch.badge === 'Novo';
+                    const iconClass = isNovo ? 'fa-box-open text-slate-400' : 'fa-box-archive text-slate-400';
+                    const titleColor = isNovo ? 'text-[#152e50]' : 'text-slate-700';
+
+                    const itemsList = (patch.details || []).map(item => `<li>${item}</li>`).join('');
+
+                    html += `
+                        <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                            <button onclick="togglePatch('${patch.id}')" class="w-full p-2.5 text-left flex justify-between items-center bg-white hover:bg-slate-50 transition-colors">
+                                <span class="text-xs font-bold ${titleColor} flex items-center gap-2">
+                                    <i class="fa-solid ${iconClass}"></i> ${patch.version}
+                                    ${isNovo ? '<span class="bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider">Novo</span>' : ''}
+                                </span>
+                                <i id="icon-${patch.id}" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
+                            </button>
+                            <div id="${patch.id}" class="hidden p-3 text-[11px] text-slate-600 border-t border-slate-100 bg-slate-50">
+                                <ul class="list-disc pl-4 space-y-1.5">
+                                    ${itemsList}
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+
+            } catch (error) {
+                console.error('Erro ao carregar Patch Notes:', error);
+                container.innerHTML = '<p class="text-xs text-rose-500 p-2 text-center">Erro ao carregar notas. Verifique se o arquivo patch-notes.json está na pasta do projeto.</p>';
+            }
+        }
+
+        // 2. Função global para abrir e fechar os acordeões de versão
+        window.togglePatch = (patchId) => {
+            const patchEl = document.getElementById(patchId);
+            const iconEl = document.getElementById(`icon-${patchId}`);
+            
+            if (patchEl) {
+                patchEl.classList.toggle('hidden');
+                if (iconEl) {
+                    iconEl.classList.toggle('rotate-180');
+                }
+            }
+        };
+
         function startAdminListeners() {
             if (useFirebase) {
                 if (!unsubDrivers) unsubDrivers = onSnapshot(collection(db, `artifacts/${appId}/public/data/drivers`), snap => {
@@ -3358,13 +3219,44 @@
             }
         }
 
+        // Atualiza o indicador visual da conexão
+        function atualizarBadgeConexao() {
+            const dot = document.getElementById('webConnectionBadgeDot');
+            const text = document.getElementById('webConnectionBadgeText');
+            if (!dot || !text) return;
+
+            if (useFirebase) {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+                text.innerText = "Online";
+            } else {
+                dot.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+                text.innerText = "Offline";
+            }
+        }
+
+        // Atualiza dinamicamente o número da versão em todas as telas com a classe .app-version-text
+        function atualizarTextosVersaoGerais() {
+            if (typeof CURRENT_VERSION !== 'undefined') {
+                document.querySelectorAll('.app-version-text').forEach(el => {
+                    el.innerText = CURRENT_VERSION;
+                });
+            }
+        }
+
         window.addEventListener('DOMContentLoaded', async () => {
             solicitarPermissaoNotificacoes();
             await inicializarContaAdminPadrao();
             await inicializarContaJrPadrao();
+            atualizarBadgeConexao();
+            
+            // Injeta a versão do JS em todos os pontos do HTML
+            atualizarTextosVersaoGerais();
+
+            // CHAMA A LEITURA AUTOMÁTICA DO JSON PARA O MODAL DE FORMA SEGURA
+            carregarPatchNotesDinamico();
 
             const lastRead = localStorage.getItem('app_last_read_version');
-            if (lastRead === CURRENT_VERSION) {
+            if (typeof CURRENT_VERSION !== 'undefined' && lastRead === CURRENT_VERSION) {
                 document.querySelectorAll('.patch-badge-notice').forEach(b => b.classList.add('hidden'));
             }
 
@@ -3386,7 +3278,7 @@
             const session = JSON.parse(localStorage.getItem('app_session') || "null");
             if (!session) {
                 carregarDadosIniciais();
-                mostrarTelaComAnimacao('screenRoleSelection');
+                window.mostrarTelaComAnimacao('screenInitial');
                 return;
             }
 
@@ -3456,4 +3348,4 @@
         <span class="text-xs uppercase tracking-wider font-bold">Abrir no Google Maps</span>
     </a>
 </body>
-</html>
+</html>  
